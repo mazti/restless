@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/spf13/viper"
 
-	"github.com/tiennv147/restless/commons/config"
+	"github.com/tiennv147/mazti-commons/config"
 )
 
 // Config stores configuration variables.

@@ -11,8 +11,8 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 
-	"github.com/tiennv147/restless/commons/errors"
-	ctransport "github.com/tiennv147/restless/commons/transport"
+	"github.com/tiennv147/mazti-commons/errors"
+	ctransport "github.com/tiennv147/mazti-commons/transport"
 	"github.com/tiennv147/restless/dto"
 	"github.com/tiennv147/restless/endpoints"
 )
@@ -25,19 +25,19 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 		httptransport.ServerErrorEncoder(ctransport.EncodeError),
 	}
 
-	// Channel
+	// Sample
 	r.Methods("POST").
 		Path("/channels").
 		Handler(httptransport.NewServer(
-			endpoints.CreateChannel,
-			decodeCreateChannelRequest,
+			endpoints.CreateSample,
+			decodeCreateSampleRequest,
 			ctransport.EncodeCommonResponse,
 			options...,
 		))
 	r.Methods("GET").
 		Path("/channels/{id}").
 		Handler(httptransport.NewServer(
-			endpoints.GetChannel,
+			endpoints.GetSample,
 			ctransport.DecodeRequestCommonWithID,
 			ctransport.EncodeCommonResponse,
 			options...,
@@ -45,7 +45,7 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 	r.Methods("GET").
 		Path("/channels").
 		Handler(httptransport.NewServer(
-			endpoints.ListChannel,
+			endpoints.ListSample,
 			ctransport.DecodeListCommonRequest,
 			ctransport.EncodeCommonResponse,
 			options...,
@@ -53,15 +53,15 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 	r.Methods("PATCH").
 		Path("/channels/{id}").
 		Handler(httptransport.NewServer(
-			endpoints.UpdateChannel,
-			decodeUpdateChannelRequest,
+			endpoints.UpdateSample,
+			decodeUpdateSampleRequest,
 			ctransport.EncodeCommonResponse,
 			options...,
 		))
 	r.Methods("DELETE").
 		Path("/channels/{id}").
 		Handler(httptransport.NewServer(
-			endpoints.DeleteChannel,
+			endpoints.DeleteSample,
 			ctransport.DecodeRequestCommonWithID,
 			ctransport.EncodeCommonResponse,
 			options...,
@@ -112,13 +112,13 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 	return r
 }
 
-func decodeCreateChannelRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req dto.CreateChannelReq
+func decodeCreateSampleRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req dto.CreateSampleReq
 	err := json.NewDecoder(r.Body).Decode(&req)
 	return req, err
 }
 
-func decodeUpdateChannelRequest(_ context.Context, r *http.Request) (interface{}, error) {
+func decodeUpdateSampleRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	vars := mux.Vars(r)
 	idStr, ok := vars["id"]
 	if !ok {
@@ -129,30 +129,7 @@ func decodeUpdateChannelRequest(_ context.Context, r *http.Request) (interface{}
 		return nil, errors.ErrInconsistentIDs
 	}
 
-	var req dto.UpdateChannelReq
-	err = json.NewDecoder(r.Body).Decode(&req)
-	req.ID = id
-	return req, err
-}
-
-func decodeCreateTVProgramRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req dto.CreateTVProgramReq
-	err := json.NewDecoder(r.Body).Decode(&req)
-	return req, err
-}
-
-func decodeUpdateTVProgramRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	vars := mux.Vars(r)
-	idStr, ok := vars["id"]
-	if !ok {
-		return nil, errors.ErrBadRouting
-	}
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		return nil, errors.ErrInconsistentIDs
-	}
-
-	var req dto.UpdateTVProgramReq
+	var req dto.UpdateSampleReq
 	err = json.NewDecoder(r.Body).Decode(&req)
 	req.ID = id
 	return req, err

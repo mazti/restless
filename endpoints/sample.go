@@ -5,42 +5,41 @@ import (
 
 	"github.com/go-kit/kit/endpoint"
 
-	cendpoints "github.com/tiennv147/restless/commons/endpoints"
 	"github.com/tiennv147/restless/dto"
 	"github.com/tiennv147/restless/service"
 )
 
-func MakeCreateChannelEndpoint(h service.ChannelService) endpoint.Endpoint {
+func MakeCreateSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(dto.CreateChannelReq)
+		req := request.(dto.CreateSampleReq)
 		return h.Create(ctx, req)
 	}
 }
 
-func MakeGetChannelEndpoint(h service.ChannelService) endpoint.Endpoint {
+func MakeGetSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(cendpoints.RequestWithID)
+		req := request.(RequestWithID)
 		return h.Get(ctx, req.ID)
 	}
 }
 
-func MakeListChannelEndpoint(h service.ChannelService) endpoint.Endpoint {
+func MakeListSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(cendpoints.ListRequest)
+		req := request.(ListRequest)
 		return h.List(ctx, req.Offset, req.Limit)
 	}
 }
 
-func MakeUpdateChannelEndpoint(h service.ChannelService) endpoint.Endpoint {
+func MakeUpdateSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(dto.UpdateChannelReq)
+		req := request.(dto.UpdateSampleReq)
 		return h.Update(ctx, req)
 	}
 }
 
-func MakeDeleteChannelEndpoint(h service.ChannelService) endpoint.Endpoint {
+func MakeDeleteSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(cendpoints.RequestWithID)
+		req := request.(RequestWithID)
 		return nil, h.Delete(ctx, req.ID)
 	}
 }
