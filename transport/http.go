@@ -27,7 +27,7 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 
 	// Sample
 	r.Methods("POST").
-		Path("/channels").
+		Path("/sample").
 		Handler(httptransport.NewServer(
 			endpoints.CreateSample,
 			decodeCreateSampleRequest,
@@ -35,7 +35,7 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 			options...,
 		))
 	r.Methods("GET").
-		Path("/channels/{id}").
+		Path("/sample/{id}").
 		Handler(httptransport.NewServer(
 			endpoints.GetSample,
 			ctransport.DecodeRequestCommonWithID,
@@ -43,7 +43,7 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 			options...,
 		))
 	r.Methods("GET").
-		Path("/channels").
+		Path("/sample").
 		Handler(httptransport.NewServer(
 			endpoints.ListSample,
 			ctransport.DecodeListCommonRequest,
@@ -51,7 +51,7 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 			options...,
 		))
 	r.Methods("PATCH").
-		Path("/channels/{id}").
+		Path("/sample/{id}").
 		Handler(httptransport.NewServer(
 			endpoints.UpdateSample,
 			decodeUpdateSampleRequest,
@@ -59,51 +59,9 @@ func NewHTTPHandler(endpoints endpoints.Endpoints, logger log.Logger) http.Handl
 			options...,
 		))
 	r.Methods("DELETE").
-		Path("/channels/{id}").
+		Path("/sample/{id}").
 		Handler(httptransport.NewServer(
 			endpoints.DeleteSample,
-			ctransport.DecodeRequestCommonWithID,
-			ctransport.EncodeCommonResponse,
-			options...,
-		))
-
-	// TVProgram
-	r.Methods("POST").
-		Path("/tvprograms").
-		Handler(httptransport.NewServer(
-			endpoints.CreateTVProgram,
-			decodeCreateTVProgramRequest,
-			ctransport.EncodeCommonResponse,
-			options...,
-		))
-	r.Methods("GET").
-		Path("/tvprograms/{id}").
-		Handler(httptransport.NewServer(
-			endpoints.GetTVProgram,
-			ctransport.DecodeRequestCommonWithID,
-			ctransport.EncodeCommonResponse,
-			options...,
-		))
-	r.Methods("GET").
-		Path("/tvprograms").
-		Handler(httptransport.NewServer(
-			endpoints.ListTVProgram,
-			ctransport.DecodeListCommonRequest,
-			ctransport.EncodeCommonResponse,
-			options...,
-		))
-	r.Methods("PATCH").
-		Path("/tvprograms/{id}").
-		Handler(httptransport.NewServer(
-			endpoints.UpdateTVProgram,
-			decodeUpdateTVProgramRequest,
-			ctransport.EncodeCommonResponse,
-			options...,
-		))
-	r.Methods("DELETE").
-		Path("/tvprograms/{id}").
-		Handler(httptransport.NewServer(
-			endpoints.DeleteTVProgram,
 			ctransport.DecodeRequestCommonWithID,
 			ctransport.EncodeCommonResponse,
 			options...,
@@ -124,13 +82,13 @@ func decodeUpdateSampleRequest(_ context.Context, r *http.Request) (interface{},
 	if !ok {
 		return nil, errors.ErrBadRouting
 	}
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 32)
 	if err != nil {
 		return nil, errors.ErrInconsistentIDs
 	}
 
 	var req dto.UpdateSampleReq
 	err = json.NewDecoder(r.Body).Decode(&req)
-	req.ID = id
+	req.ID = int(id)
 	return req, err
 }

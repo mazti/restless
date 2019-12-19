@@ -10,10 +10,11 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/oklog/oklog/pkg/group"
+	"github.com/tiennv147/mazti-commons/db"
 
 	"github.com/tiennv147/restless/config"
 	"github.com/tiennv147/restless/endpoints"
-	"github.com/tiennv147/restless/model"
+
 	"github.com/tiennv147/restless/repository"
 	"github.com/tiennv147/restless/service"
 	"github.com/tiennv147/restless/transport"
@@ -33,18 +34,15 @@ func main() {
 		os.Exit(-1)
 	}
 
-	db, err := model.NewDB(cfg.Database)
+	db, err := db.NewDB(cfg.Database)
 	if err != nil {
 		logger.Log("Failed to initialize model for operating all service, %s\n", err)
 	}
 
-	cRepo := repository.NewChannelRepository(db)
-	cService := service.NewChannelService(cRepo, logger)
+	cRepo := repository.NewSampleRepository(db)
+	cService := service.NewSampleService(cRepo, logger)
 
-	tRepo := repository.NewTVProgramRepository(db)
-	tService := service.NewTVProgramService(tRepo, logger)
-
-	cEndpoints := endpoints.New(cService, tService, logger)
+	cEndpoints := endpoints.New(cService, logger)
 	cHandler := transport.NewHTTPHandler(cEndpoints, logger)
 
 	var g group.Group

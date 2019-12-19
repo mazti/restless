@@ -4,7 +4,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
 
-	ctransport "github.com/tiennv147/mazti-commons/transport"
+	cendpoints "github.com/tiennv147/mazti-commons/endpoints"
 	"github.com/tiennv147/restless/service"
 )
 
@@ -21,31 +21,31 @@ func New(channelService service.SampleService, logger log.Logger) Endpoints {
 	var createSampleEndpoint endpoint.Endpoint
 	{
 		createSampleEndpoint = MakeCreateSampleEndpoint(channelService)
-		createSampleEndpoint = ctransport.LoggingMiddleware(log.With(logger, "method", "Create"))(createSampleEndpoint)
+		createSampleEndpoint = cendpoints.LoggingMiddleware(log.With(logger, "method", "Create"))(createSampleEndpoint)
 	}
 
 	var getSampleEndpoint endpoint.Endpoint
 	{
 		getSampleEndpoint = MakeGetSampleEndpoint(channelService)
-		getSampleEndpoint = ctransport.LoggingMiddleware(log.With(logger, "method", "Get"))(getSampleEndpoint)
+		getSampleEndpoint = cendpoints.LoggingMiddleware(log.With(logger, "method", "Get"))(getSampleEndpoint)
 	}
 
 	var listSampleEndpoint endpoint.Endpoint
 	{
 		listSampleEndpoint = MakeListSampleEndpoint(channelService)
-		listSampleEndpoint = ctransport.LoggingMiddleware(log.With(logger, "method", "List"))(listSampleEndpoint)
+		listSampleEndpoint = cendpoints.LoggingMiddleware(log.With(logger, "method", "List"))(listSampleEndpoint)
 	}
 
 	var updateSampleEndpoint endpoint.Endpoint
 	{
 		updateSampleEndpoint = MakeUpdateSampleEndpoint(channelService)
-		updateSampleEndpoint = ctransport.LoggingMiddleware(log.With(logger, "method", "Update"))(updateSampleEndpoint)
+		updateSampleEndpoint = cendpoints.LoggingMiddleware(log.With(logger, "method", "Update"))(updateSampleEndpoint)
 	}
 
 	var deleteSampleEndpoint endpoint.Endpoint
 	{
 		deleteSampleEndpoint = MakeDeleteSampleEndpoint(channelService)
-		deleteSampleEndpoint = ctransport.LoggingMiddleware(log.With(logger, "method", "Delete"))(deleteSampleEndpoint)
+		deleteSampleEndpoint = cendpoints.LoggingMiddleware(log.With(logger, "method", "Delete"))(deleteSampleEndpoint)
 	}
 
 	return Endpoints{
