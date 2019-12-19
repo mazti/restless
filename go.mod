@@ -11,5 +11,5 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/spf13/cobra v0.0.5 // indirect
 	github.com/spf13/viper v1.3.2
-	github.com/tiennv147/mazti-commons v0.0.1 // indirect
+	github.com/tiennv147/mazti-commons v0.0.1
 )
