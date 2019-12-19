@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  api:
+    build: .
+    image: tvsion-channel
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    command: ["./wait-for-it.sh","channel-db:4306", "--","./tvsion-channel"]
+  db:
+    image: mysql:5.7
+    container_name: 'channel-db'
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_DATABASE: 'tvsion-channel'
+      MYSQL_USER: 'tvsion'
+      MYSQL_PASSWORD: 'tvsion123'
+    ports:
+      - '4306:3306'
+    volumes:
+      - channel-db:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+volumes:
+  channel-db:

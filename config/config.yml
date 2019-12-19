@@ -1,0 +1,14 @@
+http:
+  listenAddr: ":8083"
+  debugAddr: ":8082"
+
+release:
+  releaseVersion: "@RELEASE_VERSION@"
+  releaseTime: "@RELEASE_TIME@"
+
+
+database:
+  url: root:123456@tcp(channel-db:3306)/tvsion-channel?charset=utf8&parseTime=true
+  maxIdle: 50
+  maxActive: 100
+  logMode: true
