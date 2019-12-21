@@ -10,13 +10,13 @@ type CreateSampleReq struct {
 }
 
 type SampleResp struct {
-	ID       int    `json:"id" validate:"required"`
+	ID       int64  `json:"id" validate:"required"`
 	Name     string `json:"name" validate:"string,min=1,required"`
 	Provider string `json:"provider" validate:"string,min=1,required"`
 }
 
 type UpdateSampleReq struct {
-	ID       int    `json:"id" validate:"required"`
+	ID       int64  `json:"id" validate:"required"`
 	Name     string `json:"name" validate:"string,min=1,required"`
 	Provider string `json:"provider" validate:"string,min=1,required"`
 }

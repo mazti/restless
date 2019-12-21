@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"context"
+	"github.com/tiennv147/mazti-commons/endpoints"
 
 	"github.com/go-kit/kit/endpoint"
 
@@ -18,14 +19,14 @@ func MakeCreateSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 
 func MakeGetSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(RequestWithID)
+		req := request.(endpoints.RequestWithID)
 		return h.Get(ctx, req.ID)
 	}
 }
 
 func MakeListSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(ListRequest)
+		req := request.(endpoints.ListRequest)
 		return h.List(ctx, req.Offset, req.Limit)
 	}
 }
@@ -39,7 +40,7 @@ func MakeUpdateSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 
 func MakeDeleteSampleEndpoint(h service.SampleService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(RequestWithID)
+		req := request.(endpoints.RequestWithID)
 		return nil, h.Delete(ctx, req.ID)
 	}
 }

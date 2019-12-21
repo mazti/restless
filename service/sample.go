@@ -14,10 +14,10 @@ import (
 
 type SampleService interface {
 	Create(ctx context.Context, req dto.CreateSampleReq) (dto.SampleResp, error)
-	Get(ctx context.Context, id int) (dto.SampleResp, error)
-	List(ctx context.Context, offset int, limit int) (cdto.ListResp, error)
+	Get(ctx context.Context, id int64) (dto.SampleResp, error)
+	List(ctx context.Context, offset int64, limit int64) (cdto.ListResp, error)
 	Update(ctx context.Context, req dto.UpdateSampleReq) (dto.SampleResp, error)
-	Delete(ctx context.Context, id int) error
+	Delete(ctx context.Context, id int64) error
 }
 
 func NewSampleService(repo repository.SampleRepository, logger log.Logger) SampleService {
@@ -65,7 +65,7 @@ func (h cameraService) Create(ctx context.Context, req dto.CreateSampleReq) (dto
 	return getSampleResp(result), nil
 }
 
-func (h cameraService) Get(ctx context.Context, id int) (dto.SampleResp, error) {
+func (h cameraService) Get(ctx context.Context, id int64) (dto.SampleResp, error) {
 	ret := dto.SampleResp{}
 	camera, err := h.repo.Get(id)
 	if err != nil {
@@ -74,7 +74,7 @@ func (h cameraService) Get(ctx context.Context, id int) (dto.SampleResp, error) 
 	return getSampleResp(camera), nil
 }
 
-func (h cameraService) List(ctx context.Context, offset int, limit int) (cdto.ListResp, error) {
+func (h cameraService) List(ctx context.Context, offset int64, limit int64) (cdto.ListResp, error) {
 	ret := cdto.ListResp{}
 	items, err := h.repo.List(offset, limit)
 	if err != nil {
@@ -89,7 +89,7 @@ func (h cameraService) List(ctx context.Context, offset int, limit int) (cdto.Li
 	total, _ := h.repo.Count()
 
 	ret.Metadata = cdto.ListMetadata{
-		Count:  count,
+		Count:  int64(count),
 		Offset: offset,
 		Limit:  limit,
 		Total:  total,
@@ -107,6 +107,6 @@ func (h cameraService) Update(ctx context.Context, req dto.UpdateSampleReq) (dto
 	return getSampleResp(camera), nil
 }
 
-func (h cameraService) Delete(ctx context.Context, id int) error {
+func (h cameraService) Delete(ctx context.Context, id int64) error {
 	return h.repo.Delete(id)
 }

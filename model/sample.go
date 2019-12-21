@@ -5,7 +5,7 @@ import (
 )
 
 type Sample struct {
-	ID        int `gorm:"primary_key"`
+	ID        int64 `gorm:"primary_key"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Name      string `gorm:"type:varchar(255)"`

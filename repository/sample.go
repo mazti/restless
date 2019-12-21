@@ -9,11 +9,11 @@ import (
 
 type SampleRepository interface {
 	Create(resource model.Sample) (model.Sample, error)
-	Get(id int) (model.Sample, error)
-	List(offset int, limit int) ([]model.Sample, error)
+	Get(id int64) (model.Sample, error)
+	List(offset int64, limit int64) ([]model.Sample, error)
 	Update(resource model.Sample) error
-	Delete(id int) error
-	Count() (int, error)
+	Delete(id int64) error
+	Count() (int64, error)
 }
 
 type channelRepository struct {
@@ -40,7 +40,7 @@ func (repo *channelRepository) Update(resource model.Sample) error {
 	return repo.db.Save(&resource).Error
 }
 
-func (repo *channelRepository) Get(id int) (model.Sample, error) {
+func (repo *channelRepository) Get(id int64) (model.Sample, error) {
 	resource := model.Sample{}
 	r := repo.db.First(&resource, id)
 	if r.RecordNotFound() {
@@ -49,13 +49,13 @@ func (repo *channelRepository) Get(id int) (model.Sample, error) {
 	return resource, r.Error
 }
 
-func (repo *channelRepository) List(offset int, limit int) ([]model.Sample, error) {
+func (repo *channelRepository) List(offset int64, limit int64) ([]model.Sample, error) {
 	var resources []model.Sample
 	err := repo.db.Offset(offset).Limit(limit).Find(&resources).Error
 	return resources, err
 }
 
-func (repo *channelRepository) Delete(id int) error {
+func (repo *channelRepository) Delete(id int64) error {
 	r := repo.db.Delete(&model.Sample{ID: id})
 	if r.RowsAffected == 0 {
 		return errors.ErrNotFound
@@ -63,8 +63,8 @@ func (repo *channelRepository) Delete(id int) error {
 	return r.Error
 }
 
-func (repo *channelRepository) Count() (int, error) {
-	var count int
+func (repo *channelRepository) Count() (int64, error) {
+	var count int64
 	err := repo.db.Model(&model.Sample{}).Count(&count)
 	return count, err.Error
 }

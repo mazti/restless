@@ -82,13 +82,13 @@ func decodeUpdateSampleRequest(_ context.Context, r *http.Request) (interface{},
 	if !ok {
 		return nil, errors.ErrBadRouting
 	}
-	id, err := strconv.ParseInt(idStr, 10, 32)
+	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		return nil, errors.ErrInconsistentIDs
 	}
 
 	var req dto.UpdateSampleReq
 	err = json.NewDecoder(r.Body).Decode(&req)
-	req.ID = int(id)
+	req.ID = id
 	return req, err
 }
