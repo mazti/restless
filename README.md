@@ -35,11 +35,11 @@ export GOPATH=$HOME/place/to/put/my/go/code
 export GO111MODULE=on
 
 # You can use go built-in tool to clone the code
-go get -d -v github.com/xuanit/testing
+go get -d -v github.com/tiennv147/restless
 
 # Or man-handling it
-mkdir -p $GOPATH/src/github.com/xuanit
-git clone https://github.com/xuanit/testing.git $GOPATH/src/github.com/xuanit/testing
+mkdir -p $GOPATH/src/github.com/tiennv147
+git clone https://github.com/tiennv147/restless.git $GOPATH/src/github.com/tiennv147/restless
 ```
 
 ### 4. Installing dependencies (Optional)
