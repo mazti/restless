@@ -10,11 +10,12 @@ import (
 	"net/http"
 
 	ctransport "github.com/tiennv147/mazti-commons/transport"
-	"github.com/tiennv147/restless/dto"
-	"github.com/tiennv147/restless/endpoints"
+	"github.com/tiennv147/restless/record/dto"
+	"github.com/tiennv147/restless/record/endpoints"
 )
 
-func NewHTTPHandler(endpoints endpoints.SchemaEndpoints, logger log.Logger) http.Handler {
+func NewHTTPHandler(endpoints endpoints.SchemaEndpoints,
+	recordEndpoints endpoints.RecordEndpoints, logger log.Logger) http.Handler {
 	r := mux.NewRouter()
 
 	options := []httptransport.ServerOption{
@@ -22,7 +23,7 @@ func NewHTTPHandler(endpoints endpoints.SchemaEndpoints, logger log.Logger) http
 		httptransport.ServerErrorEncoder(ctransport.EncodeError),
 	}
 
-	// Sample
+	// Schema-side
 	r.Methods("POST").
 		Path("/schema").
 		Handler(httptransport.NewServer(
@@ -31,6 +32,17 @@ func NewHTTPHandler(endpoints endpoints.SchemaEndpoints, logger log.Logger) http
 			ctransport.EncodeCommonResponse,
 			options...,
 		))
+
+	// Data-side
+	r.Methods("GET").
+		Path("/data/{database-id}/{table-name}").
+		Handler(httptransport.NewServer(
+			recordEndpoints.SelectRecords,
+			ctransport.DecodeListCommonRequest,
+			ctransport.EncodeCommonResponse,
+			options...,
+		))
+
 	return r
 }
 

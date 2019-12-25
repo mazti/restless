@@ -6,8 +6,8 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/tiennv147/mazti-commons/endpoints"
 
-	"github.com/tiennv147/restless/dto"
-	"github.com/tiennv147/restless/service"
+	"github.com/tiennv147/restless/record/dto"
+	"github.com/tiennv147/restless/record/service"
 )
 
 type SchemaEndpoints struct {

@@ -2,22 +2,21 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/jinzhu/gorm/dialects/mysql" //mysql dialects
 	"github.com/pkg/errors"
 	"github.com/tiennv147/mazti-commons/config"
-	"github.com/tiennv147/restless/dto"
+	"github.com/tiennv147/restless/record/dto"
 )
 
-type SchemaRepository interface {
-	Create(schema dto.CreateSchemaReq) error
+type RecordRepository interface {
+	Select(schema dto.SelectRecordsReq) error
 }
 
-type schemaRepository struct {
+type recordRepository struct {
 	db *sql.DB
 }
 
-func NewSchemaRepository(dbCfg *config.Database) (SchemaRepository, error) {
+func NewRecordRepository(dbCfg *config.Database) (RecordRepository, error) {
 	db, err := sql.Open("mysql", dbCfg.URL)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to open db URL")
@@ -30,7 +29,6 @@ func NewSchemaRepository(dbCfg *config.Database) (SchemaRepository, error) {
 	}, nil
 }
 
-func (repo *schemaRepository) Create(schema dto.CreateSchemaReq) error {
-	_, err := repo.db.Exec(fmt.Sprintf("CREATE DATABASE %s", schema.Name))
-	return err
+func (repo *schemaRepository) Select(schema dto.SelectRecordsReq) error {
+	return nil
 }
