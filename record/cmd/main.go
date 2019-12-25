@@ -10,13 +10,20 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/oklog/oklog/pkg/group"
-	"github.com/tiennv147/restless/config"
-	"github.com/tiennv147/restless/endpoints"
+	"github.com/tiennv147/restless/record/config"
+	"github.com/tiennv147/restless/record/endpoints"
 
-	"github.com/tiennv147/restless/repository"
-	"github.com/tiennv147/restless/service"
-	"github.com/tiennv147/restless/transport"
+	"github.com/tiennv147/restless/record/repository"
+	"github.com/tiennv147/restless/record/service"
+	"github.com/tiennv147/restless/record/transport"
 )
+
+func checkError(err error, logger log.Logger) {
+	if err != nil {
+		logger.Log(err)
+		os.Exit(-1)
+	}
+}
 
 func main() {
 	var logger log.Logger
@@ -33,14 +40,16 @@ func main() {
 	}
 
 	schemaRepository, err := repository.NewSchemaRepository(cfg.Database)
-	if err != nil {
-		logger.Log(err)
-		os.Exit(-1)
-	}
+	checkError(err, logger)
 	schemaService := service.NewSchemaService(schemaRepository, logger)
+	schemaEndpoints := endpoints.NewSchemaEndpoints(schemaService, logger)
 
-	sampleEndpoints := endpoints.NewSchemaEndpoints(schemaService, logger)
-	cHandler := transport.NewHTTPHandler(sampleEndpoints, logger)
+	recordRepo, err := repository.NewRecordRepository(cfg.Database)
+	checkError(err, logger)
+	recordService := service.NewRecordService(recordRepo, logger)
+	recordsEndpoints := endpoints.NewRecordEndpoints(recordService, logger)
+
+	cHandler := transport.NewHTTPHandler(schemaEndpoints, recordsEndpoints, logger)
 
 	var g group.Group
 	{

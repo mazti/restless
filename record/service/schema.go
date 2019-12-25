@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-kit/kit/log"
 
-	"github.com/tiennv147/restless/dto"
-	"github.com/tiennv147/restless/repository"
+	"github.com/tiennv147/restless/record/dto"
+	"github.com/tiennv147/restless/record/repository"
 )
 
 type SchemaService interface {
