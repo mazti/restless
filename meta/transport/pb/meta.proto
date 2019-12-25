@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package pb;
+
+service Meta {
+    rpc Create (CreateRequest) returns (CreateResponse);
+    rpc Get (GetRequest) returns (GetReply);
+    rpc List (ListRequest) returns (ListReply);
+}
+
+message CreateRequest {
+    string name = 1;
+}
+
+message CreateResponse {
+    string id = 1;
+    string name = 2;
+}
+
+message GetRequest {
+    string id = 1;
+}
+
+message GetReply {
+    string id = 1;
+    string name = 2;
+}
+
+message ListRequest {
+}
+
+message ListReply {
+    repeated MetaModel metas = 1;
+}
+
+message MetaModel {
+    string id = 1;
+    string name = 2;
+}
+
