@@ -1,6 +1,6 @@
 http:
-  listenAddr: ":8083"
-  debugAddr: ":8082"
+  listenAddr: ":8080"
+  debugAddr: ":8081"
 
 release:
   releaseVersion: "@RELEASE_VERSION@"
@@ -8,7 +8,7 @@ release:
 
 
 database:
-  url: root:123456@tcp(channel-db:3306)/tvsion-channel?charset=utf8&parseTime=true
+  url: root:123456@tcp(restless-db:3306)/?charset=utf8&parseTime=true
   maxIdle: 50
   maxActive: 100
   logMode: true
