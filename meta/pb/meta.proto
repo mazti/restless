@@ -2,8 +2,15 @@ syntax = "proto3";
 
 package pb;
 
+import "google/api/annotations.proto";
+
 service Meta {
-    rpc Create (CreateRequest) returns (CreateResponse);
+    rpc Create (CreateRequest) returns (CreateResponse) {
+        option (google.api.http) = {
+            post: "/meta"
+            body: "*"
+        };
+    };
     rpc Get (GetRequest) returns (GetReply);
     rpc List (ListRequest) returns (ListReply);
 }

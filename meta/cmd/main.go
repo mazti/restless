@@ -1,17 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"net"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/go-kit/kit/log"
-	"github.com/oklog/oklog/pkg/group"
 	"github.com/tiennv147/restless/meta/config"
 	"github.com/tiennv147/restless/meta/endpoint"
+	"github.com/tiennv147/restless/meta/pb"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+	"net"
+	"os"
 
 	"github.com/tiennv147/mazti-commons/db"
 	"github.com/tiennv147/restless/meta/repository"
@@ -19,12 +16,9 @@ import (
 	"github.com/tiennv147/restless/meta/transport"
 )
 
-func checkError(err error, logger log.Logger) {
-	if err != nil {
-		logger.Log(err)
-		os.Exit(-1)
-	}
-}
+const (
+	port = ":10000"
+)
 
 func main() {
 	var logger log.Logger
@@ -35,70 +29,31 @@ func main() {
 	}
 
 	cfg, err := config.New()
-	if err != nil {
-		logger.Log("Failed to reading config file", err)
-		os.Exit(-1)
-	}
+	checkError(err, logger)
 
-	db, err := db.NewDB(cfg.Database)
-	if err != nil {
-		logger.Log("Failed to initialize model for operating all service, %s\n", err)
-	}
+	lis, err := net.Listen("tcp", port)
+	checkError(err, logger)
 
-	schemaRepository := repository.NewMetaRepository(db)
+	restlessDB, err := db.NewDB(cfg.Database)
+	checkError(err, logger)
+
+	schemaRepository := repository.NewMetaRepository(restlessDB)
 	schemaService := service.NewMetaService(schemaRepository, logger)
 	schemaEndpoints := endpoint.New(schemaService, logger)
 
-	cHandler := transport.NewHTTPHandler(schemaEndpoints, logger)
+	s := grpc.NewServer()
+	pb.RegisterMetaServer(s, transport.NewGRPCServer(schemaEndpoints))
+	// Register reflection service on gRPC server.
+	reflection.Register(s)
 
-	var g group.Group
-	{
-		// The debug listener mounts the http.DefaultServeMux, and serves up
-		// stuff like the Prometheus metrics route, the Go debug and profiling
-		// routes, and so on.
-		debugListener, err := net.Listen("tcp", cfg.HTTP.DebugAddr)
-		if err != nil {
-			_ = logger.Log("transport", "debug/HTTP", "during", "Listen", "err", err)
-			os.Exit(1)
-		}
-		g.Add(func() error {
-			logger.Log("transport", "debug/HTTP", "addr", cfg.HTTP.DebugAddr)
-			return http.Serve(debugListener, http.DefaultServeMux)
-		}, func(error) {
-			_ = debugListener.Close()
-		})
+	if err := s.Serve(lis); err != nil {
+		checkError(err, logger)
 	}
+}
 
-	{
-		// The HTTP listener mounts the Go kit HTTP handler we created.
-		httpListener, err := net.Listen("tcp", cfg.HTTP.ListenAddr)
-		if err != nil {
-			logger.Log("transport", "HTTP", "during", "Listen", "err", err)
-			os.Exit(1)
-		}
-		g.Add(func() error {
-			logger.Log("transport", "HTTP", "addr", cfg.HTTP.ListenAddr)
-			return http.Serve(httpListener, cHandler)
-		}, func(error) {
-			_ = httpListener.Close()
-		})
+func checkError(err error, logger log.Logger) {
+	if err != nil {
+		logger.Log(err.Error())
+		os.Exit(-1)
 	}
-
-	{
-		// This function just sits and waits for ctrl-C.
-		cancelInterrupt := make(chan struct{})
-		g.Add(func() error {
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-			select {
-			case sig := <-c:
-				return fmt.Errorf("received signal %s", sig)
-			case <-cancelInterrupt:
-				return nil
-			}
-		}, func(error) {
-			close(cancelInterrupt)
-		})
-	}
-	logger.Log("exit", g.Run())
 }

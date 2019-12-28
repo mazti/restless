@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/tiennv147/restless/meta/dto"
 	"github.com/tiennv147/restless/meta/endpoint"
-	"github.com/tiennv147/restless/meta/transport/pb"
+	"github.com/tiennv147/restless/meta/pb"
 
 	"github.com/go-kit/kit/transport/grpc"
 	netcontext "golang.org/x/net/context"
