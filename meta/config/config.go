@@ -10,7 +10,9 @@ import (
 type Config struct {
 	Database *config.Database
 	HTTP     *config.HTTP
+	GRPC     *GRPC
 	Release  *config.Release
+	SwaggerDir *string
 }
 
 // New returns a new config instance.

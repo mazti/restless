@@ -1,8 +1,10 @@
 package main
 
 import (
-	"flag"
+	"github.com/go-kit/kit/log"
+	"github.com/tiennv147/restless/meta/config"
 	"net/http"
+	"os"
 	"path"
 	"strings"
 
@@ -14,26 +16,17 @@ import (
 	"golang.org/x/net/context"
 )
 
-const (
-	grpcPort = "10000"
-)
-
-var (
-	getEndpoint  = flag.String("get", "localhost:"+grpcPort, "endpoint of YourService")
-	postEndpoint = flag.String("post", "localhost:"+grpcPort, "endpoint of YourService")
-
-	swaggerDir = flag.String("swagger_dir", "pb", "path to the directory which contains swagger definitions")
-)
+var conf *config.Config
 
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
 	mux := runtime.NewServeMux(opts...)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
-	err := gw.RegisterMetaHandlerFromEndpoint(ctx, mux, *getEndpoint, dialOpts)
+	err := gw.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+conf.GRPC.ListenAddr, dialOpts)
 	if err != nil {
 		return nil, err
 	}
 
-	err = gw.RegisterMetaHandlerFromEndpoint(ctx, mux, *postEndpoint, dialOpts)
+	err = gw.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+conf.GRPC.ListenAddr, dialOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +43,7 @@ func serveSwagger(w http.ResponseWriter, r *http.Request) {
 
 	glog.Infof("Serving %s", r.URL.Path)
 	p := strings.TrimPrefix(r.URL.Path, "/swagger/")
-	p = path.Join(*swaggerDir, p)
+	p = path.Join(*conf.SwaggerDir, p)
 	http.ServeFile(w, r, p)
 }
 
@@ -78,7 +71,7 @@ func allowCORS(h http.Handler) http.Handler {
 	})
 }
 
-func Run(address string, opts ...runtime.ServeMuxOption) error {
+func Run(opts ...runtime.ServeMuxOption) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -88,21 +81,35 @@ func Run(address string, opts ...runtime.ServeMuxOption) error {
 
 	mux.HandleFunc("/swagger/", serveSwagger)
 
-	gw, err := newGateway(ctx, opts...)
+	gateway, err := newGateway(ctx, opts...)
 	if err != nil {
 		return err
 	}
-	mux.Handle("/", gw)
+	mux.Handle("/", gateway)
 
-	return http.ListenAndServe(address, allowCORS(mux))
+	return http.ListenAndServe(conf.HTTP.ListenAddr, allowCORS(mux))
 
 }
 
 func main() {
-	flag.Parse()
-	defer glog.Flush()
+	var logger log.Logger
+	{
+		logger = log.NewLogfmtLogger(os.Stderr)
+		logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+		logger = log.With(logger, "caller", log.DefaultCaller)
+	}
 
-	if err := Run(":8080"); err != nil {
-		glog.Fatal(err)
+	var err error
+	conf, err = config.New()
+	checkError(err, logger)
+
+	err = Run()
+	checkError(err, logger)
+}
+
+func checkError(err error, logger log.Logger) {
+	if err != nil {
+		logger.Log(err.Error())
+		os.Exit(-1)
 	}
 }

@@ -16,10 +16,6 @@ import (
 	"github.com/tiennv147/restless/meta/transport"
 )
 
-const (
-	port = ":10000"
-)
-
 func main() {
 	var logger log.Logger
 	{
@@ -31,7 +27,7 @@ func main() {
 	cfg, err := config.New()
 	checkError(err, logger)
 
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", cfg.GRPC.ListenAddr)
 	checkError(err, logger)
 
 	restlessDB, err := db.NewDB(cfg.Database)

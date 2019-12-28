@@ -2,6 +2,10 @@ http:
   listenAddr: ":8080"
   debugAddr: ":8081"
 
+grpc:
+  listenAddr: ":10000"
+  debugAddr: ":10001"
+
 release:
   releaseVersion: "@RELEASE_VERSION@"
   releaseTime: "@RELEASE_TIME@"
@@ -12,3 +16,5 @@ database:
   maxIdle: 50
   maxActive: 100
   logMode: true
+
+swaggerDir: "pb"
