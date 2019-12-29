@@ -14,6 +14,7 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/pkg/errors v0.8.0
 	github.com/satori/go.uuid v1.2.0
+	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2
 	github.com/tiennv147/mazti-commons v0.0.3-0.20191225181958-8ad400bb19c5
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553

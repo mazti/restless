@@ -1,4 +1,4 @@
-package servers
+package cmd
 
 import (
 	"github.com/tiennv147/mazti-commons/db"
