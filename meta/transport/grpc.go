@@ -75,6 +75,7 @@ func encodeRegisterResponse(_ context.Context, r interface{}) (interface{}, erro
 	resp := r.(dto.MetaResp)
 	return &pb.CreateResponse{
 		Id: resp.ID,
+		Name: resp.Name,
 	}, nil
 }
 
