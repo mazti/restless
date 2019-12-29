@@ -4,6 +4,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/tiennv147/restless/meta/config"
 	"github.com/tiennv147/restless/meta/endpoint"
+	"github.com/tiennv147/restless/meta/model"
 	"github.com/tiennv147/restless/meta/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -32,6 +33,8 @@ func main() {
 
 	restlessDB, err := db.NewDB(cfg.Database)
 	checkError(err, logger)
+
+	restlessDB.AutoMigrate(model.Meta{})
 
 	schemaRepository := repository.NewMetaRepository(restlessDB)
 	schemaService := service.NewMetaService(schemaRepository, logger)

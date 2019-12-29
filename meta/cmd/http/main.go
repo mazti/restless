@@ -10,13 +10,15 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/golang/glog"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	gw "github.com/tiennv147/restless/meta/pb"
 	"golang.org/x/net/context"
 )
 
-var conf *config.Config
+var (
+	conf   *config.Config
+	logger log.Logger
+)
 
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
 	mux := runtime.NewServeMux(opts...)
@@ -36,12 +38,12 @@ func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handl
 
 func serveSwagger(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasSuffix(r.URL.Path, ".swagger.json") {
-		glog.Errorf("Swagger JSON not Found: %s", r.URL.Path)
+		logger.Log("ERROR", "Swagger JSON not Found: %s", r.URL.Path)
 		http.NotFound(w, r)
 		return
 	}
 
-	glog.Infof("Serving %s", r.URL.Path)
+	logger.Log("INFO", "Serving %s", r.URL.Path)
 	p := strings.TrimPrefix(r.URL.Path, "/swagger/")
 	p = path.Join(*conf.SwaggerDir, p)
 	http.ServeFile(w, r, p)
@@ -52,7 +54,7 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
 	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
-	glog.Infof("preflight request for %s", r.URL.Path)
+	logger.Log("INFO", "preflight request for %s", r.URL.Path)
 	return
 }
 
@@ -92,24 +94,21 @@ func Run(opts ...runtime.ServeMuxOption) error {
 }
 
 func main() {
-	var logger log.Logger
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-		logger = log.With(logger, "caller", log.DefaultCaller)
-	}
+	logger = log.NewLogfmtLogger(os.Stderr)
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+	logger = log.With(logger, "caller", log.DefaultCaller)
 
 	var err error
 	conf, err = config.New()
-	checkError(err, logger)
+	checkError(err)
 
 	err = Run()
-	checkError(err, logger)
+	checkError(err)
 }
 
-func checkError(err error, logger log.Logger) {
+func checkError(err error) {
 	if err != nil {
-		logger.Log(err.Error())
+		logger.Log("ERROR", err.Error())
 		os.Exit(-1)
 	}
 }

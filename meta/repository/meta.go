@@ -5,7 +5,6 @@ import (
 
 	"github.com/tiennv147/mazti-commons/errors"
 	"github.com/tiennv147/restless/meta/model"
-	"github.com/google/uuid"
 )
 
 type MetaRepository interface {
@@ -31,11 +30,6 @@ func NewMetaRepository(db *gorm.DB) MetaRepository {
 }
 
 func (repo *metaRepository) Create(meta model.Meta) (model.Meta, error) {
-	id, err := uuid.NewDCEPerson()
-	if err != nil {
-		return meta, err
-	}
-	meta.ID = id.String()
 	if err := repo.db.Create(&meta).Error; err != nil {
 		return meta, err
 	}
