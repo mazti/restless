@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+
+service Meta {
+    rpc Create (CreateRequest) returns (CreateResponse) {
+        option (google.api.http) = {
+            post: "/meta"
+            body: "*"
+        };
+    };
+    rpc Get (GetRequest) returns (GetReply);
+    rpc List (ListRequest) returns (ListReply);
+}
+
+message CreateRequest {
+    string name = 1;
+}
+
+message CreateResponse {
+    string id = 1;
+    string name = 2;
+}
+
+message GetRequest {
+    string id = 1;
+}
+
+message GetReply {
+    string id = 1;
+    string name = 2;
+}
+
+message ListRequest {
+}
+
+message ListReply {
+    repeated MetaModel metas = 1;
+}
+
+message MetaModel {
+    string id = 1;
+    string name = 2;
+}
+

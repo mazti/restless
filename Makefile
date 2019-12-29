@@ -1,6 +1,6 @@
-.PHONY: run
-run:
-	go run cmd/main.go
+.PHONY: install
+install:
+	go install $(pwd)
 
 .PHONY: up
 up:

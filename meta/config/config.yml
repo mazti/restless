@@ -1,0 +1,20 @@
+http:
+  listenAddr: ":8080"
+  debugAddr: ":8081"
+
+grpc:
+  listenAddr: ":10000"
+  debugAddr: ":10001"
+
+release:
+  releaseVersion: "@RELEASE_VERSION@"
+  releaseTime: "@RELEASE_TIME@"
+
+
+database:
+  url: root:123456@tcp(restless-db:3306)/restless?charset=utf8&parseTime=true
+  maxIdle: 50
+  maxActive: 100
+  logMode: true
+
+swaggerDir: "pb"
