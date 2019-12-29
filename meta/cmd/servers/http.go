@@ -1,10 +1,8 @@
-package main
+package servers
 
 import (
-	"github.com/go-kit/kit/log"
-	"github.com/tiennv147/restless/meta/config"
+	"net"
 	"net/http"
-	"os"
 	"path"
 	"strings"
 
@@ -15,20 +13,33 @@ import (
 	"golang.org/x/net/context"
 )
 
-var (
-	conf   *config.Config
-	logger log.Logger
-)
+func RunHTTP(listener net.Listener, opts ...runtime.ServeMuxOption) error {
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/swagger/", serveSwagger)
+
+	gateway, err := newGateway(ctx, opts...)
+	if err != nil {
+		return err
+	}
+	mux.Handle("/", gateway)
+
+	return http.Serve(listener, allowCORS(mux))
+}
 
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
 	mux := runtime.NewServeMux(opts...)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
-	err := gw.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+conf.GRPC.ListenAddr, dialOpts)
+	err := gw.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+Config.GRPC.ListenAddr, dialOpts)
 	if err != nil {
 		return nil, err
 	}
 
-	err = gw.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+conf.GRPC.ListenAddr, dialOpts)
+	err = gw.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+Config.GRPC.ListenAddr, dialOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -38,14 +49,14 @@ func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handl
 
 func serveSwagger(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasSuffix(r.URL.Path, ".swagger.json") {
-		logger.Log("ERROR", "Swagger JSON not Found: %s", r.URL.Path)
+		Logger.Log("ERROR", "Swagger JSON not Found: %s", r.URL.Path)
 		http.NotFound(w, r)
 		return
 	}
 
-	logger.Log("INFO", "Serving %s", r.URL.Path)
+	Logger.Log("INFO", "Serving %s", r.URL.Path)
 	p := strings.TrimPrefix(r.URL.Path, "/swagger/")
-	p = path.Join(*conf.SwaggerDir, p)
+	p = path.Join(*Config.SwaggerDir, p)
 	http.ServeFile(w, r, p)
 }
 
@@ -54,7 +65,7 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
 	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
-	logger.Log("INFO", "preflight request for %s", r.URL.Path)
+	Logger.Log("INFO", "preflight request for %s", r.URL.Path)
 	return
 }
 
@@ -71,44 +82,4 @@ func allowCORS(h http.Handler) http.Handler {
 		}
 		h.ServeHTTP(w, r)
 	})
-}
-
-func Run(opts ...runtime.ServeMuxOption) error {
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
-	//mux := runtime.NewServeMux()
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/swagger/", serveSwagger)
-
-	gateway, err := newGateway(ctx, opts...)
-	if err != nil {
-		return err
-	}
-	mux.Handle("/", gateway)
-
-	return http.ListenAndServe(conf.HTTP.ListenAddr, allowCORS(mux))
-
-}
-
-func main() {
-	logger = log.NewLogfmtLogger(os.Stderr)
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	logger = log.With(logger, "caller", log.DefaultCaller)
-
-	var err error
-	conf, err = config.New()
-	checkError(err)
-
-	err = Run()
-	checkError(err)
-}
-
-func checkError(err error) {
-	if err != nil {
-		logger.Log("ERROR", err.Error())
-		os.Exit(-1)
-	}
 }
