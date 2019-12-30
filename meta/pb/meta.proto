@@ -11,8 +11,27 @@ service Meta {
             body: "*"
         };
     };
-    rpc Get (GetRequest) returns (GetReply);
-    rpc List (ListRequest) returns (ListReply);
+    rpc Get (GetRequest) returns (GetReply) {
+        option (google.api.http) = {
+            get: "/meta/{id}"
+        };
+    };
+    rpc List (ListRequest) returns (ListReply) {
+        option (google.api.http) = {
+            get: "/meta"
+        };
+    };
+    rpc Update (UpdateRequest) returns (UpdateResponse) {
+        option (google.api.http) = {
+            patch: "/meta/{id}"
+            body: "*"
+        };
+    };
+    rpc Delete (DeleteRequest) returns (DeleteResponse) {
+        option (google.api.http) = {
+            delete: "/meta/{id}"
+        };
+    };
 }
 
 message CreateRequest {
@@ -40,6 +59,23 @@ message ListRequest {
 
 message ListReply {
     repeated MetaModel metas = 1;
+}
+
+message UpdateRequest {
+    string id = 1;
+    string name = 2;
+}
+
+message UpdateResponse {
+    string id = 1;
+    string name = 2;
+}
+
+message DeleteRequest {
+    string id = 1;
+}
+
+message DeleteResponse {
 }
 
 message MetaModel {

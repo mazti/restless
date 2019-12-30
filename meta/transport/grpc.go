@@ -43,7 +43,7 @@ func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetRequest) (*pb.GetRep
 }
 
 func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListRequest) (*pb.ListReply, error) {
-	resp, err := g.metaService.List(ctx, int(req.Limit), int(req.Offset))
+	resp, err := g.metaService.List(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -55,4 +55,23 @@ func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListRequest) (*pb.List
 	return &pb.ListReply{
 		Metas: metas,
 	}, nil
+}
+
+func (g *grpcServer) Update(ctx netcontext.Context, req *pb.UpdateRequest) (*pb.UpdateResponse, error) {
+	resp, err := g.metaService.Update(ctx, dto.UpdateMetaReq{ID: req.Id, Name: req.Name})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateResponse{
+		Id:   resp.ID,
+		Name: resp.Name,
+	}, nil
+}
+
+func (g *grpcServer) Delete(ctx netcontext.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+	err := g.metaService.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DeleteResponse{}, nil
 }
