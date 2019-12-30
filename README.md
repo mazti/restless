@@ -54,3 +54,24 @@ go mod vendor
 We usually refer to this practice as **vendoring**, hence the name of the utility
 
 ### 5. Run the tests
+
+### 6. Install and Run as CLI tool
+
+Install
+```sh
+# Make sure you're inside of the project directory first
+$GOPATH/src/github.com/tiennv147/restless make install
+```
+
+Commands
+```sh
+# Helps
+restless help
+
+# Run meta service (both grpc and http)
+restless meta
+
+# Run meta service (grpc only)
+restless meta -g
+
+```

@@ -1,105 +1,52 @@
 package transport
 
 import (
-	"context"
 	"github.com/tiennv147/restless/meta/dto"
-	"github.com/tiennv147/restless/meta/endpoint"
 	"github.com/tiennv147/restless/meta/pb"
+	"github.com/tiennv147/restless/meta/service"
 
-	"github.com/go-kit/kit/transport/grpc"
 	netcontext "golang.org/x/net/context"
 )
 
 type grpcServer struct {
-	create grpc.Handler
-	get    grpc.Handler
-	list   grpc.Handler
+	metaService service.MetaService
 }
 
-func NewGRPCServer(endpoints endpoint.Endpoints) pb.MetaServer {
+func NewGRPCServer(service service.MetaService) pb.MetaServer {
 	return &grpcServer{
-		create: makeCreateHandler(endpoints),
-		get:    makeGetHandler(endpoints),
-		list:   makeListHandler(endpoints),
+		metaService: service,
 	}
-}
-
-func makeCreateHandler(endpoints endpoint.Endpoints) grpc.Handler {
-	return grpc.NewServer(endpoints.CreateMeta, decodeCreateRequest, encodeRegisterResponse)
-}
-
-func makeGetHandler(endpoints endpoint.Endpoints) grpc.Handler {
-	return grpc.NewServer(endpoints.GetMeta, decodeGetRequest, encodeGetResponse)
-}
-
-func makeListHandler(endpoints endpoint.Endpoints) grpc.Handler {
-	return grpc.NewServer(endpoints.ListMeta, decodeListRequest, encodeListResponse)
 }
 
 // Implementations
 
 func (g *grpcServer) Create(ctx netcontext.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
-	_, rep, err := g.create.ServeGRPC(ctx, req)
+	resp, err := g.metaService.Create(ctx, dto.CreateMetaReq{Name: req.Name,})
 	if err != nil {
 		return nil, err
 	}
-	return rep.(*pb.CreateResponse), nil
-}
-
-func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetRequest) (*pb.GetReply, error) {
-	_, rep, err := g.get.ServeGRPC(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return rep.(*pb.GetReply), nil
-}
-
-func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListRequest) (*pb.ListReply, error) {
-	_, rep, err := g.list.ServeGRPC(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return rep.(*pb.ListReply), nil
-}
-
-// Decoder and encoder
-
-func decodeCreateRequest(_ context.Context, r interface{}) (interface{}, error) {
-	req := r.(*pb.CreateRequest)
-	return dto.CreateMetaReq{
-		Name: req.Name,
-	}, nil
-}
-
-func encodeRegisterResponse(_ context.Context, r interface{}) (interface{}, error) {
-	resp := r.(dto.MetaResp)
 	return &pb.CreateResponse{
-		Id: resp.ID,
+		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func decodeGetRequest(_ context.Context, r interface{}) (interface{}, error) {
-	req := r.(*pb.GetRequest)
-	return endpoint.RequestWithID{
-		ID: req.Id,
-	}, nil
-}
-
-func encodeGetResponse(_ context.Context, r interface{}) (interface{}, error) {
-	resp := r.(dto.MetaResp)
+func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetRequest) (*pb.GetReply, error) {
+	resp, err := g.metaService.Get(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.GetReply{
 		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func decodeListRequest(_ context.Context, _ interface{}) (interface{}, error) {
-	return dto.ListMetaResp{}, nil
-}
-
-func encodeListResponse(_ context.Context, r interface{}) (interface{}, error) {
-	resp := r.(dto.ListMetaResp)
+func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListRequest) (*pb.ListReply, error) {
+	resp, err := g.metaService.List(ctx, int(req.Limit), int(req.Offset))
+	if err != nil {
+		return nil, err
+	}
 	var metas []*pb.MetaModel
 	for _, u := range resp.Results {
 		su := pb.MetaModel{Id: u.ID, Name: u.Name}
