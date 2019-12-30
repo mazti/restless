@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/tiennv147/mazti-commons/db"
-	"github.com/tiennv147/restless/meta/endpoint"
 	"github.com/tiennv147/restless/meta/model"
 	"github.com/tiennv147/restless/meta/pb"
 	"github.com/tiennv147/restless/meta/repository"
@@ -21,10 +20,9 @@ func RunGRPC(listener net.Listener) error {
 
 	schemaRepository := repository.NewMetaRepository(restlessDB)
 	schemaService := service.NewMetaService(schemaRepository, Logger)
-	schemaEndpoints := endpoint.New(schemaService, Logger)
 
 	s := grpc.NewServer()
-	pb.RegisterMetaServer(s, transport.NewGRPCServer(schemaEndpoints))
+	pb.RegisterMetaServer(s, transport.NewGRPCServer(schemaService))
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 

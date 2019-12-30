@@ -15,7 +15,7 @@ import (
 type MetaService interface {
 	Create(ctx context.Context, req dto.CreateMetaReq) (dto.MetaResp, error)
 	Get(ctx context.Context, id string) (dto.MetaResp, error)
-	List(ctx context.Context, offset int, limit int) (cdto.ListResp, error)
+	List(ctx context.Context, offset int, limit int) (dto.ListMetaResp, error)
 	Update(ctx context.Context, req dto.UpdateMetaReq) (dto.MetaResp, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -71,14 +71,14 @@ func (h metaService) Get(ctx context.Context, id string) (dto.MetaResp, error) {
 	return getMetaResp(meta), nil
 }
 
-func (h metaService) List(ctx context.Context, offset int, limit int) (cdto.ListResp, error) {
-	ret := cdto.ListResp{}
+func (h metaService) List(ctx context.Context, offset int, limit int) (dto.ListMetaResp, error) {
+	ret := dto.ListMetaResp{}
 	items, err := h.repo.List(offset, limit)
 	if err != nil {
 		return ret, err
 	}
 	count := len(items)
-	ret.Results = make([]interface{}, count)
+	ret.Results = make([]dto.MetaResp, count)
 	for i, item := range items {
 		ret.Results[i] = getMetaResp(item)
 	}
