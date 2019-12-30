@@ -42,7 +42,7 @@ func (repo *metaRepository) Update(meta model.Meta) error {
 
 func (repo *metaRepository) Get(id string) (model.Meta, error) {
 	meta := model.Meta{}
-	r := repo.db.First(&meta, id)
+	r := repo.db.Where("id = ?", id).First(&meta)
 	if r.RecordNotFound() {
 		return meta, errors.ErrNotFound
 	}

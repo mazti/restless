@@ -11,8 +11,16 @@ service Meta {
             body: "*"
         };
     };
-    rpc Get (GetRequest) returns (GetReply);
-    rpc List (ListRequest) returns (ListReply);
+    rpc Get (GetRequest) returns (GetReply) {
+        option (google.api.http) = {
+            get: "/meta/{id}"
+        };
+    };
+    rpc List (ListRequest) returns (ListReply) {
+        option (google.api.http) = {
+            get: "/meta"
+        };
+    };
 }
 
 message CreateRequest {

@@ -43,7 +43,7 @@ func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetRequest) (*pb.GetRep
 }
 
 func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListRequest) (*pb.ListReply, error) {
-	resp, err := g.metaService.List(ctx, int(req.Limit), int(req.Offset))
+	resp, err := g.metaService.List(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
