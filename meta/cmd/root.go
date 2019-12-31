@@ -24,10 +24,10 @@ var (
 			grpcListener, err := net.Listen("tcp", Config.GRPC.ListenAddr)
 			CheckError(err)
 			g.Add(func() error {
-				Logger.Log("RESTLESS - META", "GRPC server", "started...")
+				Logger.Log("RESTLESS - META", "GRPC server", "started...", Config.GRPC.ListenAddr)
 				return RunGRPC(grpcListener)
 			}, func(error) {
-				Logger.Log("RESTLESS - META", "GRPC server", "stopped...")
+				Logger.Log("RESTLESS - META", "GRPC server", "stopped...", Config.GRPC.ListenAddr)
 				CheckError(grpcListener.Close())
 			})
 
@@ -35,10 +35,10 @@ var (
 				httpListener, err := net.Listen("tcp", Config.HTTP.ListenAddr)
 				CheckError(err)
 				g.Add(func() error {
-					Logger.Log("RESTLESS - META", "HTTP server", "started...")
+					Logger.Log("RESTLESS - META", "HTTP server", "started...", Config.HTTP.ListenAddr)
 					return RunHTTP(httpListener)
 				}, func(error) {
-					Logger.Log("RESTLESS - META", "HTTP server", "stopped...")
+					Logger.Log("RESTLESS - META", "HTTP server", "stopped...", Config.HTTP.ListenAddr)
 					CheckError(httpListener.Close())
 				})
 			}
