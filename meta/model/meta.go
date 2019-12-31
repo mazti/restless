@@ -13,6 +13,6 @@ type Meta struct {
 	Name      string `gorm:"type:varchar(255)"`
 }
 
-func (base *Meta) BeforeCreate(scope *gorm.Scope) error {
+func (meta *Meta) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("ID", uuid.NewV4().String())
 }

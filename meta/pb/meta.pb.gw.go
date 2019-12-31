@@ -32,7 +32,7 @@ var _ = utilities.NewDoubleArray
 var _ = descriptor.ForMessage
 
 func request_Meta_Create_0(ctx context.Context, marshaler runtime.Marshaler, client MetaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateRequest
+	var protoReq CreateMetaRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -49,7 +49,7 @@ func request_Meta_Create_0(ctx context.Context, marshaler runtime.Marshaler, cli
 }
 
 func local_request_Meta_Create_0(ctx context.Context, marshaler runtime.Marshaler, server MetaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateRequest
+	var protoReq CreateMetaRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -66,7 +66,7 @@ func local_request_Meta_Create_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func request_Meta_Get_0(ctx context.Context, marshaler runtime.Marshaler, client MetaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetRequest
+	var protoReq GetMetaRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -93,7 +93,7 @@ func request_Meta_Get_0(ctx context.Context, marshaler runtime.Marshaler, client
 }
 
 func local_request_Meta_Get_0(ctx context.Context, marshaler runtime.Marshaler, server MetaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetRequest
+	var protoReq GetMetaRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -124,7 +124,7 @@ var (
 )
 
 func request_Meta_List_0(ctx context.Context, marshaler runtime.Marshaler, client MetaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ListRequest
+	var protoReq ListMetaRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -140,7 +140,7 @@ func request_Meta_List_0(ctx context.Context, marshaler runtime.Marshaler, clien
 }
 
 func local_request_Meta_List_0(ctx context.Context, marshaler runtime.Marshaler, server MetaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ListRequest
+	var protoReq ListMetaRequest
 	var metadata runtime.ServerMetadata
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Meta_List_0); err != nil {
@@ -153,7 +153,7 @@ func local_request_Meta_List_0(ctx context.Context, marshaler runtime.Marshaler,
 }
 
 func request_Meta_Update_0(ctx context.Context, marshaler runtime.Marshaler, client MetaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateRequest
+	var protoReq UpdateMetaRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -188,7 +188,7 @@ func request_Meta_Update_0(ctx context.Context, marshaler runtime.Marshaler, cli
 }
 
 func local_request_Meta_Update_0(ctx context.Context, marshaler runtime.Marshaler, server MetaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateRequest
+	var protoReq UpdateMetaRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -223,7 +223,7 @@ func local_request_Meta_Update_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func request_Meta_Delete_0(ctx context.Context, marshaler runtime.Marshaler, client MetaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteRequest
+	var protoReq DeleteMetaRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -250,7 +250,7 @@ func request_Meta_Delete_0(ctx context.Context, marshaler runtime.Marshaler, cli
 }
 
 func local_request_Meta_Delete_0(ctx context.Context, marshaler runtime.Marshaler, server MetaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteRequest
+	var protoReq DeleteMetaRequest
 	var metadata runtime.ServerMetadata
 
 	var (

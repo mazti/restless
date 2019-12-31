@@ -22,8 +22,8 @@ func New() (*Config, error) {
 	viper.New()
 	viper.SetConfigType("yml")
 	viper.SetConfigName("config")
-	viper.AddConfigPath("$GOPATH/src/github.com/tiennv147/restless/meta/config/.")
 	viper.AddConfigPath("./")
+	viper.AddConfigPath("$GOPATH/src/github.com/tiennv147/restless/meta/config/.")
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err
