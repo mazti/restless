@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+
+service Base {
+    rpc Create (CreateBaseRequest) returns (CreateBaseReply) {
+        option (google.api.http) = {
+            post: "/base"
+            body: "*"
+        };
+    };
+    rpc Get (GetBaseRequest) returns (GetBaseReply) {
+        option (google.api.http) = {
+            get: "/base/{id}"
+        };
+    };
+    rpc List (ListBaseRequest) returns (ListBaseReply) {
+        option (google.api.http) = {
+            get: "/base"
+        };
+    };
+    rpc Update (UpdateBaseRequest) returns (UpdateBaseReply) {
+        option (google.api.http) = {
+            patch: "/base/{id}"
+            body: "*"
+        };
+    };
+    rpc Delete (DeleteBaseRequest) returns (DeleteBaseReply) {
+        option (google.api.http) = {
+            delete: "/base/{id}"
+        };
+    };
+}
+
+message CreateBaseRequest {
+    string name = 1;
+}
+
+message CreateBaseReply {
+    string id = 1;
+    string name = 2;
+}
+
+message GetBaseRequest {
+    string id = 1;
+}
+
+message GetBaseReply {
+    string id = 1;
+    string name = 2;
+}
+
+message ListBaseRequest {
+    int32 limit = 1;
+    int32 offset = 2;
+}
+
+message ListBaseReply {
+    repeated BaseModel bases = 1;
+    ListMetadata metadata = 2;
+}
+
+message UpdateBaseRequest {
+    string id = 1;
+    string name = 2;
+}
+
+message UpdateBaseReply {
+    string id = 1;
+    string name = 2;
+}
+
+message DeleteBaseRequest {
+    string id = 1;
+}
+
+message DeleteBaseReply {
+}
+
+message BaseModel {
+    string id = 1;
+    string name = 2;
+}
+
+message ListMetadata {
+    int32 count = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+    int64 total = 4;
+}
