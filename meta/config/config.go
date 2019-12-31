@@ -19,17 +19,17 @@ type Config struct {
 func New() (*Config, error) {
 	cfg := &Config{}
 
-	viper.New()
-	viper.SetConfigType("yml")
-	viper.SetConfigName("config")
-	viper.AddConfigPath("./")
-	viper.AddConfigPath("$GOPATH/src/github.com/tiennv147/restless/meta/config/.")
+	v := viper.New()
+	v.SetConfigType("yml")
+	v.SetConfigName("config")
+	v.AddConfigPath("./")
+	v.AddConfigPath("$GOPATH/src/github.com/tiennv147/restless/meta/config/.")
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err := v.ReadInConfig(); err != nil {
 		return nil, err
 	}
 
-	if err := viper.Unmarshal(cfg); err != nil {
+	if err := v.Unmarshal(cfg); err != nil {
 		return nil, err
 	}
 	return cfg, nil
