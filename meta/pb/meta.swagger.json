@@ -18,7 +18,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbListReply"
+              "$ref": "#/definitions/pbListMetaReply"
             }
           }
         },
@@ -48,7 +48,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateResponse"
+              "$ref": "#/definitions/pbCreateMetaReply"
             }
           }
         },
@@ -58,7 +58,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateRequest"
+              "$ref": "#/definitions/pbCreateMetaRequest"
             }
           }
         ],
@@ -74,7 +74,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbGetReply"
+              "$ref": "#/definitions/pbGetMetaReply"
             }
           }
         },
@@ -96,7 +96,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbDeleteResponse"
+              "$ref": "#/definitions/pbDeleteMetaReply"
             }
           }
         },
@@ -118,7 +118,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbUpdateResponse"
+              "$ref": "#/definitions/pbUpdateMetaReply"
             }
           }
         },
@@ -134,7 +134,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbUpdateRequest"
+              "$ref": "#/definitions/pbUpdateMetaRequest"
             }
           }
         ],
@@ -145,15 +145,7 @@
     }
   },
   "definitions": {
-    "pbCreateRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateResponse": {
+    "pbCreateMetaReply": {
       "type": "object",
       "properties": {
         "id": {
@@ -164,10 +156,18 @@
         }
       }
     },
-    "pbDeleteResponse": {
+    "pbCreateMetaRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbDeleteMetaReply": {
       "type": "object"
     },
-    "pbGetReply": {
+    "pbGetMetaReply": {
       "type": "object",
       "properties": {
         "id": {
@@ -178,7 +178,7 @@
         }
       }
     },
-    "pbListReply": {
+    "pbListMetaReply": {
       "type": "object",
       "properties": {
         "metas": {
@@ -186,6 +186,9 @@
           "items": {
             "$ref": "#/definitions/pbMetaModel"
           }
+        },
+        "metadata": {
+          "$ref": "#/definitions/pbMetadata"
         }
       }
     },
@@ -200,7 +203,28 @@
         }
       }
     },
-    "pbUpdateRequest": {
+    "pbMetadata": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbUpdateMetaReply": {
       "type": "object",
       "properties": {
         "id": {
@@ -211,7 +235,7 @@
         }
       }
     },
-    "pbUpdateResponse": {
+    "pbUpdateMetaRequest": {
       "type": "object",
       "properties": {
         "id": {
