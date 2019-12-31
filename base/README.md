@@ -1,3 +1,3 @@
 # base
 
-Service manage database schema
+Service manage database base
