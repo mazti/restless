@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package pb;
+package meta;
 
 import "google/api/annotations.proto";
 
@@ -59,7 +59,7 @@ message ListMetaRequest {
 
 message ListMetaReply {
     repeated MetaModel metas = 1;
-    Metadata metadata = 2;
+    ListMetadata metadata = 2;
 }
 
 message UpdateMetaRequest {
@@ -84,7 +84,7 @@ message MetaModel {
     string name = 2;
 }
 
-message Metadata {
+message ListMetadata {
     int32 count = 1;
     int32 limit = 2;
     int32 offset = 3;

@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/tiennv147/mazti-commons/db"
 	"github.com/tiennv147/restless/meta/model"
-	"github.com/tiennv147/restless/meta/pb"
+	pb "github.com/tiennv147/restless/meta/pb/meta"
 	"github.com/tiennv147/restless/meta/repository"
 	"github.com/tiennv147/restless/meta/service"
 	"github.com/tiennv147/restless/meta/transport"
@@ -19,7 +19,7 @@ func RunGRPC(listener net.Listener) error {
 	restlessDB.AutoMigrate(model.Meta{})
 
 	schemaRepository := repository.NewMetaRepository(restlessDB)
-	schemaService := service.NewMetaService(schemaRepository, Logger)
+	schemaService := service.NewMetaService(schemaRepository)
 
 	s := grpc.NewServer()
 	pb.RegisterMetaServer(s, transport.NewGRPCServer(schemaService))

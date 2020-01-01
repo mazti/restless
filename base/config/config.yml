@@ -1,3 +1,4 @@
+name: "BASE"
 http:
   listenAddr: ":7070"
   debugAddr: ":7071"

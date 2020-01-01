@@ -2,7 +2,7 @@ package transport
 
 import (
 	"github.com/tiennv147/restless/base/dto"
-	"github.com/tiennv147/restless/base/pb"
+	pb "github.com/tiennv147/restless/base/pb/base"
 	"github.com/tiennv147/restless/base/service"
 
 	netcontext "golang.org/x/net/context"

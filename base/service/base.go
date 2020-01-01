@@ -7,9 +7,8 @@ import (
 	"github.com/tiennv147/restless/base/config"
 	"github.com/tiennv147/restless/base/dto"
 	"github.com/tiennv147/restless/base/repository"
-	"github.com/tiennv147/restless/meta/pb"
+	pb "github.com/tiennv147/restless/meta/pb/meta"
 	"google.golang.org/grpc"
-	"log"
 )
 
 type BaseService interface {
@@ -35,7 +34,6 @@ func NewBaseService(repo repository.BaseRepository, conf config.Config) (BaseSer
 type baseService struct {
 	repo       repository.BaseRepository
 	metaClient pb.MetaClient
-	logger     log.Logger
 }
 
 func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dto.BaseResp, err error) {

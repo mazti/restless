@@ -3,9 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kit/kit/log"
 	_ "github.com/jinzhu/gorm/dialects/mysql" //mysql dialects
-
 	cdto "github.com/tiennv147/mazti-commons/dto"
 	"github.com/tiennv147/restless/meta/dto"
 	"github.com/tiennv147/restless/meta/model"
@@ -20,16 +18,14 @@ type MetaService interface {
 	Delete(ctx context.Context, id string) error
 }
 
-func NewMetaService(repo repository.MetaRepository, logger log.Logger) MetaService {
+func NewMetaService(repo repository.MetaRepository) MetaService {
 	return metaService{
-		repo:   repo,
-		logger: logger,
+		repo: repo,
 	}
 }
 
 type metaService struct {
 	repo   repository.MetaRepository
-	logger log.Logger
 }
 
 func getMeta(req dto.CreateMetaReq) model.Meta {
