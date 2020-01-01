@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/tiennv147/restless/base/pb"
+	pb "github.com/tiennv147/restless/base/pb/base"
 	"github.com/tiennv147/restless/base/repository"
 	"github.com/tiennv147/restless/base/service"
 	"github.com/tiennv147/restless/base/transport"

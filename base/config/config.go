@@ -8,6 +8,7 @@ import (
 
 // Config stores configuration variables.
 type Config struct {
+	Name       *string
 	Database   *config.Database
 	HTTP       *config.HTTP
 	GRPC       *GRPC

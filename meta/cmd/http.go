@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"net"
 	"net/http"
 	"path"
@@ -9,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	gw "github.com/tiennv147/restless/meta/pb"
+	gw "github.com/tiennv147/restless/meta/pb/meta"
 	"golang.org/x/net/context"
 )
 
@@ -49,12 +50,12 @@ func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handl
 
 func serveSwagger(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasSuffix(r.URL.Path, ".swagger.json") {
-		Logger.Log("ERROR", "Swagger JSON not Found: %s", r.URL.Path)
+		log.Println("ERROR", "Swagger JSON not Found: %s", r.URL.Path)
 		http.NotFound(w, r)
 		return
 	}
 
-	Logger.Log("INFO", "Serving %s", r.URL.Path)
+	log.Println("INFO", "Serving %s", r.URL.Path)
 	p := strings.TrimPrefix(r.URL.Path, "/swagger/")
 	p = path.Join(*Config.SwaggerDir, p)
 	http.ServeFile(w, r, p)
@@ -65,7 +66,7 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
 	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
-	Logger.Log("INFO", "preflight request for %s", r.URL.Path)
+	log.Println("INFO", "preflight request for %s", r.URL.Path)
 	return
 }
 

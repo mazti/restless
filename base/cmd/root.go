@@ -1,17 +1,18 @@
 package cmd
 
 import (
-	"github.com/go-kit/kit/log"
+	"fmt"
 	"github.com/oklog/oklog/pkg/group"
 	"github.com/spf13/cobra"
 	"github.com/tiennv147/restless/base/config"
+	"log"
 	"net"
 	"os"
+	"time"
 )
 
 var (
-	Config *config.Config
-	Logger log.Logger
+	Config, _ = config.New()
 
 	BaseCmd = &cobra.Command{
 		Use:   "base",
@@ -21,14 +22,13 @@ var (
 			grpcOnly, _ := cmd.Flags().GetBool("grpc")
 			g := &group.Group{}
 
-			Logger.Log(Config)
 			grpcListener, err := net.Listen("tcp", Config.GRPC.ListenAddr)
 			CheckError(err)
 			g.Add(func() error {
-				Logger.Log("RESTLESS - BASE", "GRPC server", "started...", Config.GRPC.ListenAddr)
+				log.Println("RESTLESS - BASE", "GRPC server", "started...", Config.GRPC.ListenAddr)
 				return RunGRPC(grpcListener)
 			}, func(error) {
-				Logger.Log("RESTLESS - BASE", "GRPC server", "stopped...", Config.GRPC.ListenAddr)
+				log.Println("RESTLESS - BASE", "GRPC server", "stopped...", Config.GRPC.ListenAddr)
 				CheckError(grpcListener.Close())
 			})
 
@@ -36,10 +36,10 @@ var (
 				httpListener, err := net.Listen("tcp", Config.HTTP.ListenAddr)
 				CheckError(err)
 				g.Add(func() error {
-					Logger.Log("RESTLESS - BASE", "HTTP server", "started...", Config.HTTP.ListenAddr)
+					log.Println("RESTLESS - BASE", "HTTP server", "started...", Config.HTTP.ListenAddr)
 					return RunHTTP(httpListener)
 				}, func(error) {
-					Logger.Log("RESTLESS - BASE", "HTTP server", "stopped...", Config.HTTP.ListenAddr)
+					log.Println("RESTLESS - BASE", "HTTP server", "stopped...", Config.HTTP.ListenAddr)
 					CheckError(httpListener.Close())
 				})
 			}
@@ -59,18 +59,21 @@ func init() {
 }
 
 func initConfig() {
-	Logger = log.NewLogfmtLogger(os.Stderr)
-	Logger = log.With(Logger, "ts", log.DefaultTimestampUTC)
-	Logger = log.With(Logger, "caller", log.DefaultCaller)
+	log.SetFlags(0)
+	log.SetOutput(&logWriter{name: *Config.Name})
+}
 
-	var err error
-	Config, err = config.New()
-	CheckError(err)
+type logWriter struct {
+	name string
+}
+
+func (writer logWriter) Write(bytes []byte) (int, error) {
+	return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05-0700") + " [" + writer.name + "] " + string(bytes))
 }
 
 func CheckError(err error) {
 	if err != nil {
-		Logger.Log("ERROR", err.Error())
+		log.Println("ERROR", err.Error())
 		os.Exit(-1)
 	}
 }

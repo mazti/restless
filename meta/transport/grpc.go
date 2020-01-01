@@ -2,7 +2,7 @@ package transport
 
 import (
 	"github.com/tiennv147/restless/meta/dto"
-	"github.com/tiennv147/restless/meta/pb"
+	pb "github.com/tiennv147/restless/meta/pb/meta"
 	"github.com/tiennv147/restless/meta/service"
 
 	netcontext "golang.org/x/net/context"
@@ -55,7 +55,7 @@ func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListMetaRequest) (*pb.
 
 	return &pb.ListMetaReply{
 		Metas: metas,
-		Metadata: &pb.Metadata{
+		Metadata: &pb.ListMetadata{
 			Count:  int32(resp.Metadata.Count),
 			Limit:  int32(resp.Metadata.Limit),
 			Offset: int32(resp.Metadata.Offset),

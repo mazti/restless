@@ -1,3 +1,4 @@
+name: "META"
 http:
   listenAddr: ":8080"
   debugAddr: ":8081"
