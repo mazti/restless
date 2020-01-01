@@ -37,18 +37,19 @@ type baseService struct {
 }
 
 func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dto.BaseResp, err error) {
-	err = h.repo.Create(req)
-	if err == nil {
-		return base, err
-	}
 	resp, err := h.metaClient.Create(ctx, &pb.CreateMetaRequest{Name: req.Name})
-	if err == nil {
+	if err != nil {
 		return base, err
 	}
 	if resp == nil {
 		return base, errors.New("create base meta fail")
 	}
-	return dto.BaseResp{ID: resp.Id, Name: resp.Name}, err
+	err = h.repo.Create(dto.CreateBaseReq{Name:resp.Id})
+	if err != nil {
+		return base, err
+	}
+	baseResp := dto.BaseResp{ID: resp.Id, Name: resp.Name}
+	return baseResp, err
 }
 
 func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {

@@ -4,7 +4,6 @@ import (
 	"github.com/tiennv147/restless/base/dto"
 	pb "github.com/tiennv147/restless/base/pb/base"
 	"github.com/tiennv147/restless/base/service"
-
 	netcontext "golang.org/x/net/context"
 )
 
@@ -21,13 +20,13 @@ func NewGRPCServer(service service.BaseService) pb.BaseServer {
 // Implementations
 
 func (g *grpcServer) Create(ctx netcontext.Context, req *pb.CreateBaseRequest) (*pb.CreateBaseReply, error) {
-	meta, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name,})
+	base, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name,})
 	if err != nil {
 		return nil, err
 	}
 	return &pb.CreateBaseReply{
-		Id:   meta.ID,
-		Name: meta.Name,
+		Id:   base.ID,
+		Name: base.Name,
 	}, nil
 }
 
