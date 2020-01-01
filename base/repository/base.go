@@ -31,6 +31,6 @@ func NewBaseRepository(dbCfg *config.Database) (BaseRepository, error) {
 }
 
 func (repo *baseRepository) Create(base dto.CreateBaseReq) error {
-	_, err := repo.db.Exec(fmt.Sprintf("CREATE DATABASE %s", base.Name))
+	_, err := repo.db.Exec(fmt.Sprintf("CREATE DATABASE `%s`", base.Name))
 	return err
 }

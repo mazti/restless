@@ -14,11 +14,11 @@ func RunGRPC(listener net.Listener) error {
 
 	baseRepository, err := repository.NewBaseRepository(Config.Database)
 	CheckError(err)
-	schemaService, err := service.NewBaseService(baseRepository, *Config)
+	baseService, err := service.NewBaseService(baseRepository, *Config)
 	CheckError(err)
 
 	s := grpc.NewServer()
-	pb.RegisterBaseServer(s, transport.NewGRPCServer(schemaService))
+	pb.RegisterBaseServer(s, transport.NewGRPCServer(baseService))
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 
