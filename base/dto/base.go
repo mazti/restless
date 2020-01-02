@@ -4,11 +4,6 @@ import (
 	mazti "github.com/tiennv147/mazti-commons/dto"
 )
 
-type Base struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-}
-
 type CreateBaseReq struct {
 	Name string `json:"name"`
 }

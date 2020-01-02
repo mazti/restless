@@ -27,7 +27,7 @@ service Base {
             body: "*"
         };
     };
-    rpc Delete (DeleteBaseRequest) returns (DeleteBaseReply) {
+    rpc Delete (DeleteBaseRequest) returns (EmptyMsg) {
         option (google.api.http) = {
             delete: "/base/{id}"
         };
@@ -76,7 +76,7 @@ message DeleteBaseRequest {
     string id = 1;
 }
 
-message DeleteBaseReply {
+message EmptyMsg {
 }
 
 message BaseModel {
@@ -89,4 +89,24 @@ message ListMetadata {
     int32 limit = 2;
     int32 offset = 3;
     int64 total = 4;
+}
+
+service Table {
+    rpc Create (CreateTableRequest) returns (EmptyMsg) {
+        option (google.api.http) = {
+            post: "/table/{schema}"
+            body: "*"
+        };
+    };
+}
+
+message CreateTableRequest {
+    string schema = 1;
+    string name = 2;
+    repeated TableColumn columns = 3;
+}
+
+message TableColumn {
+    string name = 1;
+    string attributes = 2;
 }

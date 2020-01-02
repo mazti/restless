@@ -2,7 +2,7 @@ package transport
 
 import (
 	"github.com/tiennv147/restless/meta/dto"
-	pb "github.com/tiennv147/restless/meta/pb/meta"
+	"github.com/tiennv147/restless/meta/pb/meta"
 	"github.com/tiennv147/restless/meta/service"
 
 	netcontext "golang.org/x/net/context"
@@ -12,7 +12,7 @@ type grpcServer struct {
 	metaService service.MetaService
 }
 
-func NewGRPCServer(service service.MetaService) pb.MetaServer {
+func NewGRPCServer(service service.MetaService) meta.MetaServer {
 	return &grpcServer{
 		metaService: service,
 	}
@@ -20,42 +20,42 @@ func NewGRPCServer(service service.MetaService) pb.MetaServer {
 
 // Implementations
 
-func (g *grpcServer) Create(ctx netcontext.Context, req *pb.CreateMetaRequest) (*pb.CreateMetaReply, error) {
+func (g *grpcServer) Create(ctx netcontext.Context, req *meta.CreateMetaRequest) (*meta.CreateMetaReply, error) {
 	resp, err := g.metaService.Create(ctx, dto.CreateMetaReq{Name: req.Name,})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CreateMetaReply{
+	return &meta.CreateMetaReply{
 		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetMetaRequest) (*pb.GetMetaReply, error) {
+func (g *grpcServer) Get(ctx netcontext.Context, req *meta.GetMetaRequest) (*meta.GetMetaReply, error) {
 	resp, err := g.metaService.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetMetaReply{
+	return &meta.GetMetaReply{
 		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListMetaRequest) (*pb.ListMetaReply, error) {
+func (g *grpcServer) List(ctx netcontext.Context, req *meta.ListMetaRequest) (*meta.ListMetaReply, error) {
 	resp, err := g.metaService.List(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
-	var metas []*pb.MetaModel
+	var metas []*meta.MetaModel
 	for _, u := range resp.Results {
-		su := pb.MetaModel{Id: u.ID, Name: u.Name}
+		su := meta.MetaModel{Id: u.ID, Name: u.Name}
 		metas = append(metas, &su)
 	}
 
-	return &pb.ListMetaReply{
+	return &meta.ListMetaReply{
 		Metas: metas,
-		Metadata: &pb.ListMetadata{
+		Metadata: &meta.ListMetadata{
 			Count:  int32(resp.Metadata.Count),
 			Limit:  int32(resp.Metadata.Limit),
 			Offset: int32(resp.Metadata.Offset),
@@ -64,21 +64,21 @@ func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListMetaRequest) (*pb.
 	}, nil
 }
 
-func (g *grpcServer) Update(ctx netcontext.Context, req *pb.UpdateMetaRequest) (*pb.UpdateMetaReply, error) {
+func (g *grpcServer) Update(ctx netcontext.Context, req *meta.UpdateMetaRequest) (*meta.UpdateMetaReply, error) {
 	resp, err := g.metaService.Update(ctx, dto.UpdateMetaReq{ID: req.Id, Name: req.Name})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.UpdateMetaReply{
+	return &meta.UpdateMetaReply{
 		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func (g *grpcServer) Delete(ctx netcontext.Context, req *pb.DeleteMetaRequest) (*pb.DeleteMetaReply, error) {
+func (g *grpcServer) Delete(ctx netcontext.Context, req *meta.DeleteMetaRequest) (*meta.DeleteMetaReply, error) {
 	err := g.metaService.Delete(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.DeleteMetaReply{}, nil
+	return &meta.DeleteMetaReply{}, nil
 }
