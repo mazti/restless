@@ -7,7 +7,8 @@ import (
 	"github.com/tiennv147/restless/base/config"
 	"github.com/tiennv147/restless/base/dto"
 	"github.com/tiennv147/restless/base/repository"
-	"github.com/tiennv147/restless/meta/pb/meta"
+	meta "github.com/tiennv147/restless/meta/pb"
+	"github.com/tiennv147/restless/shared"
 	"google.golang.org/grpc"
 )
 
@@ -53,19 +54,19 @@ func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dt
 
 func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {
 	ret := dto.BaseResp{}
-	meta, err := h.metaClient.Get(ctx, &meta.GetMetaRequest{Id: id})
+	m, err := h.metaClient.Get(ctx, &shared.GetRequest{Id: id})
 	if err != nil {
 		return ret, err
 	}
 	return dto.BaseResp{
-		ID:   meta.Id,
-		Name: meta.Name,
+		ID:   m.Id,
+		Name: m.Name,
 	}, nil
 }
 
 func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListBaseResp, error) {
 	ret := dto.ListBaseResp{}
-	reply, err := h.metaClient.List(ctx, &meta.ListMetaRequest{Offset: int32(offset), Limit: int32(limit)})
+	reply, err := h.metaClient.List(ctx, &shared.ListRequest{Offset: int32(offset), Limit: int32(limit)})
 	if err != nil {
 		return ret, err
 	}
@@ -88,17 +89,17 @@ func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListB
 
 func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (dto.BaseResp, error) {
 	ret := dto.BaseResp{}
-	meta, err := h.metaClient.Update(ctx, &meta.UpdateMetaRequest{Id: req.ID, Name: req.Name})
+	m, err := h.metaClient.Update(ctx, &meta.UpdateMetaRequest{Id: req.ID, Name: req.Name})
 	if err != nil {
 		return ret, err
 	}
 	return dto.BaseResp{
-		ID:   meta.Id,
-		Name: meta.Name,
+		ID:   m.Id,
+		Name: m.Name,
 	}, nil
 }
 
 func (h baseService) Delete(ctx context.Context, id string) error {
-	_, err := h.metaClient.Delete(ctx, &meta.DeleteMetaRequest{Id: id})
+	_, err := h.metaClient.Delete(ctx, &shared.DeleteRequest{Id: id})
 	return err
 }

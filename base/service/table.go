@@ -5,7 +5,7 @@ import (
 	"github.com/tiennv147/restless/base/config"
 	"github.com/tiennv147/restless/base/dto"
 	"github.com/tiennv147/restless/base/repository"
-	"github.com/tiennv147/restless/meta/pb/meta"
+	"github.com/tiennv147/restless/meta/pb"
 	"google.golang.org/grpc"
 )
 
@@ -21,13 +21,13 @@ func NewTableService(repo repository.BaseRepository, conf config.Config) (TableS
 
 	return &tableService{
 		repo:       repo,
-		metaClient: meta.NewMetaClient(conn),
+		metaClient: pb.NewMetaClient(conn),
 	}, nil
 }
 
 type tableService struct {
 	repo       repository.BaseRepository
-	metaClient meta.MetaClient
+	metaClient pb.MetaClient
 }
 
 func (h tableService) Create(ctx context.Context, req dto.CreateTableReq) error {

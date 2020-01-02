@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package base;
+package pb;
 
 import "google/api/annotations.proto";
+import "github.com/tiennv147/restless/shared/shared.proto";
 
 service Base {
     rpc Create (CreateBaseRequest) returns (CreateBaseReply) {
@@ -11,12 +12,12 @@ service Base {
             body: "*"
         };
     };
-    rpc Get (GetBaseRequest) returns (GetBaseReply) {
+    rpc Get (shared.GetRequest) returns (GetBaseReply) {
         option (google.api.http) = {
             get: "/base/{id}"
         };
     };
-    rpc List (ListBaseRequest) returns (ListBaseReply) {
+    rpc List (shared.ListRequest) returns (ListBaseReply) {
         option (google.api.http) = {
             get: "/base"
         };
@@ -27,7 +28,7 @@ service Base {
             body: "*"
         };
     };
-    rpc Delete (DeleteBaseRequest) returns (EmptyMsg) {
+    rpc Delete (shared.DeleteRequest) returns (shared.EmptyMsg) {
         option (google.api.http) = {
             delete: "/base/{id}"
         };
@@ -43,23 +44,14 @@ message CreateBaseReply {
     string name = 2;
 }
 
-message GetBaseRequest {
-    string id = 1;
-}
-
 message GetBaseReply {
     string id = 1;
     string name = 2;
 }
 
-message ListBaseRequest {
-    int32 limit = 1;
-    int32 offset = 2;
-}
-
 message ListBaseReply {
     repeated BaseModel bases = 1;
-    ListMetadata metadata = 2;
+    shared.ListMetadata metadata = 2;
 }
 
 message UpdateBaseRequest {
@@ -72,41 +64,7 @@ message UpdateBaseReply {
     string name = 2;
 }
 
-message DeleteBaseRequest {
-    string id = 1;
-}
-
-message EmptyMsg {
-}
-
 message BaseModel {
     string id = 1;
     string name = 2;
-}
-
-message ListMetadata {
-    int32 count = 1;
-    int32 limit = 2;
-    int32 offset = 3;
-    int64 total = 4;
-}
-
-service Table {
-    rpc Create (CreateTableRequest) returns (EmptyMsg) {
-        option (google.api.http) = {
-            post: "/table/{schema}"
-            body: "*"
-        };
-    };
-}
-
-message CreateTableRequest {
-    string schema = 1;
-    string name = 2;
-    repeated TableColumn columns = 3;
-}
-
-message TableColumn {
-    string name = 1;
-    string attributes = 2;
 }

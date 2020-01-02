@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"database/sql"
-	base "github.com/tiennv147/restless/base/pb/base"
+	"github.com/tiennv147/restless/base/pb"
 	"github.com/tiennv147/restless/base/repository"
 	"github.com/tiennv147/restless/base/service"
 	"github.com/tiennv147/restless/base/transport"
@@ -23,8 +23,8 @@ func RunGRPC(listener net.Listener) error {
 	CheckError(err)
 
 	s := grpc.NewServer()
-	base.RegisterBaseServer(s, transport.NewBaseGRPCServer(baseService))
-	base.RegisterTableServer(s, transport.NewTableGRPCServer(tableService))
+	pb.RegisterBaseServer(s, transport.NewBaseGRPCServer(baseService))
+	pb.RegisterTableServer(s, transport.NewTableGRPCServer(tableService))
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 
