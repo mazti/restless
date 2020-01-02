@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "pb/meta/meta.proto",
+    "title": "base/pb/base.proto",
     "version": "version not set"
   },
   "consumes": [
@@ -11,14 +11,14 @@
     "application/json"
   ],
   "paths": {
-    "/meta": {
+    "/base": {
       "get": {
         "operationId": "List",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/metaListMetaReply"
+              "$ref": "#/definitions/pbListBaseReply"
             }
           }
         },
@@ -39,7 +39,7 @@
           }
         ],
         "tags": [
-          "Meta"
+          "Base"
         ]
       },
       "post": {
@@ -48,7 +48,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/metaCreateMetaReply"
+              "$ref": "#/definitions/pbCreateBaseReply"
             }
           }
         },
@@ -58,23 +58,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/metaCreateMetaRequest"
+              "$ref": "#/definitions/pbCreateBaseRequest"
             }
           }
         ],
         "tags": [
-          "Meta"
+          "Base"
         ]
       }
     },
-    "/meta/{id}": {
+    "/base/{id}": {
       "get": {
         "operationId": "Get",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/metaGetMetaReply"
+              "$ref": "#/definitions/pbGetBaseReply"
             }
           }
         },
@@ -87,7 +87,7 @@
           }
         ],
         "tags": [
-          "Meta"
+          "Base"
         ]
       },
       "delete": {
@@ -96,7 +96,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/metaDeleteMetaReply"
+              "$ref": "#/definitions/sharedEmptyMsg"
             }
           }
         },
@@ -109,7 +109,7 @@
           }
         ],
         "tags": [
-          "Meta"
+          "Base"
         ]
       },
       "patch": {
@@ -118,7 +118,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/metaUpdateMetaReply"
+              "$ref": "#/definitions/pbUpdateBaseReply"
             }
           }
         },
@@ -134,18 +134,18 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/metaUpdateMetaRequest"
+              "$ref": "#/definitions/pbUpdateBaseRequest"
             }
           }
         ],
         "tags": [
-          "Meta"
+          "Base"
         ]
       }
     }
   },
   "definitions": {
-    "metaCreateMetaReply": {
+    "pbBaseModel": {
       "type": "object",
       "properties": {
         "id": {
@@ -156,18 +156,7 @@
         }
       }
     },
-    "metaCreateMetaRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "metaDeleteMetaReply": {
-      "type": "object"
-    },
-    "metaGetMetaReply": {
+    "pbCreateBaseReply": {
       "type": "object",
       "properties": {
         "id": {
@@ -178,21 +167,65 @@
         }
       }
     },
-    "metaListMetaReply": {
+    "pbCreateBaseRequest": {
       "type": "object",
       "properties": {
-        "metas": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetBaseReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbListBaseReply": {
+      "type": "object",
+      "properties": {
+        "bases": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/metaMetaModel"
+            "$ref": "#/definitions/pbBaseModel"
           }
         },
         "metadata": {
-          "$ref": "#/definitions/metaListMetadata"
+          "$ref": "#/definitions/sharedListMetadata"
         }
       }
     },
-    "metaListMetadata": {
+    "pbUpdateBaseReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateBaseRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "sharedEmptyMsg": {
+      "type": "object"
+    },
+    "sharedListMetadata": {
       "type": "object",
       "properties": {
         "count": {
@@ -210,39 +243,6 @@
         "total": {
           "type": "string",
           "format": "int64"
-        }
-      }
-    },
-    "metaMetaModel": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "metaUpdateMetaReply": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "metaUpdateMetaRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
         }
       }
     }

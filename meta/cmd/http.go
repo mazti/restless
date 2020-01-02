@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/tiennv147/restless/meta/pb/meta"
+	"github.com/tiennv147/restless/meta/pb"
 	"log"
 	"net"
 	"net/http"
@@ -35,7 +35,7 @@ func RunHTTP(listener net.Listener, opts ...runtime.ServeMuxOption) error {
 func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handler, error) {
 	mux := runtime.NewServeMux(opts...)
 	dialOpts := []grpc.DialOption{grpc.WithInsecure()}
-	err := meta.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+Config.GRPC.ListenAddr, dialOpts)
+	err := pb.RegisterMetaHandlerFromEndpoint(ctx, mux, "0.0.0.0"+Config.GRPC.ListenAddr, dialOpts)
 	if err != nil {
 		return nil, err
 	}

@@ -2,8 +2,9 @@ package transport
 
 import (
 	"github.com/tiennv147/restless/base/dto"
-	pb "github.com/tiennv147/restless/base/pb/base"
+	base "github.com/tiennv147/restless/base/pb"
 	"github.com/tiennv147/restless/base/service"
+	"github.com/tiennv147/restless/shared"
 	netcontext "golang.org/x/net/context"
 )
 
@@ -11,7 +12,7 @@ type baseGRPCServer struct {
 	baseService service.BaseService
 }
 
-func NewBaseGRPCServer(service service.BaseService) pb.BaseServer {
+func NewBaseGRPCServer(service service.BaseService) base.BaseServer {
 	return &baseGRPCServer{
 		baseService: service,
 	}
@@ -19,41 +20,41 @@ func NewBaseGRPCServer(service service.BaseService) pb.BaseServer {
 
 // Implementations
 
-func (g *baseGRPCServer) Create(ctx netcontext.Context, req *pb.CreateBaseRequest) (*pb.CreateBaseReply, error) {
-	base, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name,})
+func (g *baseGRPCServer) Create(ctx netcontext.Context, req *base.CreateBaseRequest) (*base.CreateBaseReply, error) {
+	b, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name,})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CreateBaseReply{
-		Id:   base.ID,
-		Name: base.Name,
+	return &base.CreateBaseReply{
+		Id:   b.ID,
+		Name: b.Name,
 	}, nil
 }
 
-func (g *baseGRPCServer) Get(ctx netcontext.Context, req *pb.GetBaseRequest) (*pb.GetBaseReply, error) {
+func (g *baseGRPCServer) Get(ctx netcontext.Context, req *shared.GetRequest) (*base.GetBaseReply, error) {
 	resp, err := g.baseService.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetBaseReply{
+	return &base.GetBaseReply{
 		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func (g *baseGRPCServer) List(ctx netcontext.Context, req *pb.ListBaseRequest) (*pb.ListBaseReply, error) {
+func (g *baseGRPCServer) List(ctx netcontext.Context, req *shared.ListRequest) (*base.ListBaseReply, error) {
 	resp, err := g.baseService.List(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
-	var bases []*pb.BaseModel
+	var bases []*base.BaseModel
 	for _, u := range resp.Results {
-		su := pb.BaseModel{Id: u.ID, Name: u.Name}
+		su := base.BaseModel{Id: u.ID, Name: u.Name}
 		bases = append(bases, &su)
 	}
-	return &pb.ListBaseReply{
+	return &base.ListBaseReply{
 		Bases: bases,
-		Metadata: &pb.ListMetadata{
+		Metadata: &shared.ListMetadata{
 			Count:  int32(resp.Metadata.Count),
 			Limit:  int32(resp.Metadata.Limit),
 			Offset: int32(resp.Metadata.Offset),
@@ -62,21 +63,21 @@ func (g *baseGRPCServer) List(ctx netcontext.Context, req *pb.ListBaseRequest) (
 	}, nil
 }
 
-func (g *baseGRPCServer) Update(ctx netcontext.Context, req *pb.UpdateBaseRequest) (*pb.UpdateBaseReply, error) {
+func (g *baseGRPCServer) Update(ctx netcontext.Context, req *base.UpdateBaseRequest) (*base.UpdateBaseReply, error) {
 	resp, err := g.baseService.Update(ctx, dto.UpdateBaseReq{ID: req.Id, Name: req.Name})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.UpdateBaseReply{
+	return &base.UpdateBaseReply{
 		Id:   resp.ID,
 		Name: resp.Name,
 	}, nil
 }
 
-func (g *baseGRPCServer) Delete(ctx netcontext.Context, req *pb.DeleteBaseRequest) (*pb.EmptyMsg, error) {
+func (g *baseGRPCServer) Delete(ctx netcontext.Context, req *shared.DeleteRequest) (*shared.EmptyMsg, error) {
 	err := g.baseService.Delete(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.EmptyMsg{}, nil
+	return &shared.EmptyMsg{}, nil
 }

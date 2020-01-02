@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+import "github.com/tiennv147/restless/shared/shared.proto";
+
+service Table {
+    rpc Create (CreateTableRequest) returns (shared.EmptyMsg) {
+        option (google.api.http) = {
+            post: "/table/{schema}"
+            body: "*"
+        };
+    };
+}
+
+message CreateTableRequest {
+    string schema = 1;
+    string name = 2;
+    repeated TableColumn columns = 3;
+}
+
+message TableColumn {
+    string name = 1;
+    string attributes = 2;
+}

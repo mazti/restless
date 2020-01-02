@@ -1,0 +1,80 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "base/pb/table.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/table/{schema}": {
+      "post": {
+        "operationId": "Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/sharedEmptyMsg"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "schema",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateTableRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Table"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pbCreateTableRequest": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbTableColumn"
+          }
+        }
+      }
+    },
+    "pbTableColumn": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "string"
+        }
+      }
+    },
+    "sharedEmptyMsg": {
+      "type": "object"
+    }
+  }
+}
