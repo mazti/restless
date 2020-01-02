@@ -96,7 +96,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/baseDeleteBaseReply"
+              "$ref": "#/definitions/baseEmptyMsg"
             }
           }
         },
@@ -142,6 +142,38 @@
           "Base"
         ]
       }
+    },
+    "/table/{schema}": {
+      "post": {
+        "operationId": "Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/baseEmptyMsg"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "schema",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/baseCreateTableRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Table"
+        ]
+      }
     }
   },
   "definitions": {
@@ -175,7 +207,24 @@
         }
       }
     },
-    "baseDeleteBaseReply": {
+    "baseCreateTableRequest": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/baseTableColumn"
+          }
+        }
+      }
+    },
+    "baseEmptyMsg": {
       "type": "object"
     },
     "baseGetBaseReply": {
@@ -221,6 +270,17 @@
         "total": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "baseTableColumn": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "string"
         }
       }
     },

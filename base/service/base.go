@@ -7,7 +7,7 @@ import (
 	"github.com/tiennv147/restless/base/config"
 	"github.com/tiennv147/restless/base/dto"
 	"github.com/tiennv147/restless/base/repository"
-	pb "github.com/tiennv147/restless/meta/pb/meta"
+	"github.com/tiennv147/restless/meta/pb/meta"
 	"google.golang.org/grpc"
 )
 
@@ -27,34 +27,33 @@ func NewBaseService(repo repository.BaseRepository, conf config.Config) (BaseSer
 
 	return &baseService{
 		repo:       repo,
-		metaClient: pb.NewMetaClient(conn),
+		metaClient: meta.NewMetaClient(conn),
 	}, nil
 }
 
 type baseService struct {
 	repo       repository.BaseRepository
-	metaClient pb.MetaClient
+	metaClient meta.MetaClient
 }
 
 func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dto.BaseResp, err error) {
-	resp, err := h.metaClient.Create(ctx, &pb.CreateMetaRequest{Name: req.Name})
+	resp, err := h.metaClient.Create(ctx, &meta.CreateMetaRequest{Name: req.Name})
 	if err != nil {
 		return base, err
 	}
 	if resp == nil {
 		return base, errors.New("create base meta fail")
 	}
-	err = h.repo.Create(dto.CreateBaseReq{Name:resp.Id})
+	err = h.repo.CreateSchema(resp.Id)
 	if err != nil {
 		return base, err
 	}
-	baseResp := dto.BaseResp{ID: resp.Id, Name: resp.Name}
-	return baseResp, err
+	return dto.BaseResp{ID: resp.Id, Name: resp.Name}, err
 }
 
 func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {
 	ret := dto.BaseResp{}
-	meta, err := h.metaClient.Get(ctx, &pb.GetMetaRequest{Id: id})
+	meta, err := h.metaClient.Get(ctx, &meta.GetMetaRequest{Id: id})
 	if err != nil {
 		return ret, err
 	}
@@ -66,7 +65,7 @@ func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {
 
 func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListBaseResp, error) {
 	ret := dto.ListBaseResp{}
-	reply, err := h.metaClient.List(ctx, &pb.ListMetaRequest{Offset: int32(offset), Limit: int32(limit)})
+	reply, err := h.metaClient.List(ctx, &meta.ListMetaRequest{Offset: int32(offset), Limit: int32(limit)})
 	if err != nil {
 		return ret, err
 	}
@@ -89,7 +88,7 @@ func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListB
 
 func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (dto.BaseResp, error) {
 	ret := dto.BaseResp{}
-	meta, err := h.metaClient.Update(ctx, &pb.UpdateMetaRequest{Id: req.ID, Name: req.Name})
+	meta, err := h.metaClient.Update(ctx, &meta.UpdateMetaRequest{Id: req.ID, Name: req.Name})
 	if err != nil {
 		return ret, err
 	}
@@ -100,6 +99,6 @@ func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (dto.Bas
 }
 
 func (h baseService) Delete(ctx context.Context, id string) error {
-	_, err := h.metaClient.Delete(ctx, &pb.DeleteMetaRequest{Id: id})
+	_, err := h.metaClient.Delete(ctx, &meta.DeleteMetaRequest{Id: id})
 	return err
 }

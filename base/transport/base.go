@@ -7,19 +7,19 @@ import (
 	netcontext "golang.org/x/net/context"
 )
 
-type grpcServer struct {
+type baseGRPCServer struct {
 	baseService service.BaseService
 }
 
-func NewGRPCServer(service service.BaseService) pb.BaseServer {
-	return &grpcServer{
+func NewBaseGRPCServer(service service.BaseService) pb.BaseServer {
+	return &baseGRPCServer{
 		baseService: service,
 	}
 }
 
 // Implementations
 
-func (g *grpcServer) Create(ctx netcontext.Context, req *pb.CreateBaseRequest) (*pb.CreateBaseReply, error) {
+func (g *baseGRPCServer) Create(ctx netcontext.Context, req *pb.CreateBaseRequest) (*pb.CreateBaseReply, error) {
 	base, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name,})
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (g *grpcServer) Create(ctx netcontext.Context, req *pb.CreateBaseRequest) (
 	}, nil
 }
 
-func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetBaseRequest) (*pb.GetBaseReply, error) {
+func (g *baseGRPCServer) Get(ctx netcontext.Context, req *pb.GetBaseRequest) (*pb.GetBaseReply, error) {
 	resp, err := g.baseService.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (g *grpcServer) Get(ctx netcontext.Context, req *pb.GetBaseRequest) (*pb.Ge
 	}, nil
 }
 
-func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListBaseRequest) (*pb.ListBaseReply, error) {
+func (g *baseGRPCServer) List(ctx netcontext.Context, req *pb.ListBaseRequest) (*pb.ListBaseReply, error) {
 	resp, err := g.baseService.List(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (g *grpcServer) List(ctx netcontext.Context, req *pb.ListBaseRequest) (*pb.
 	}, nil
 }
 
-func (g *grpcServer) Update(ctx netcontext.Context, req *pb.UpdateBaseRequest) (*pb.UpdateBaseReply, error) {
+func (g *baseGRPCServer) Update(ctx netcontext.Context, req *pb.UpdateBaseRequest) (*pb.UpdateBaseReply, error) {
 	resp, err := g.baseService.Update(ctx, dto.UpdateBaseReq{ID: req.Id, Name: req.Name})
 	if err != nil {
 		return nil, err
@@ -73,10 +73,10 @@ func (g *grpcServer) Update(ctx netcontext.Context, req *pb.UpdateBaseRequest) (
 	}, nil
 }
 
-func (g *grpcServer) Delete(ctx netcontext.Context, req *pb.DeleteBaseRequest) (*pb.DeleteBaseReply, error) {
+func (g *baseGRPCServer) Delete(ctx netcontext.Context, req *pb.DeleteBaseRequest) (*pb.EmptyMsg, error) {
 	err := g.baseService.Delete(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.DeleteBaseReply{}, nil
+	return &pb.EmptyMsg{}, nil
 }
