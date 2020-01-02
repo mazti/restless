@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+
+service Record {
+    rpc Create (ListRecordsRequest) returns (Records) {
+        option (google.api.http) = {
+            post: "/{base}/{table}"
+            body: "*"
+        };
+    };
+
+}
+
+message ListRecordsRequest {
+    string base = 1;
+    string table = 2;
+}
+
+message Records {
+    string offset = 1;
+    repeated Record records = 2;
+}
+
+message Record {
+    string id = 1;
+    google.protobuf.Struct fields = 2;
+}
