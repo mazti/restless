@@ -4,7 +4,7 @@ import (
 	"github.com/tiennv147/restless/meta/dto"
 	meta "github.com/tiennv147/restless/meta/pb"
 	"github.com/tiennv147/restless/meta/service"
-	"github.com/tiennv147/restless/shared"
+	shared "github.com/tiennv147/restless/shared/proto"
 
 	netcontext "golang.org/x/net/context"
 )

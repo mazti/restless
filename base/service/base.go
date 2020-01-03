@@ -8,7 +8,7 @@ import (
 	"github.com/tiennv147/restless/base/dto"
 	"github.com/tiennv147/restless/base/repository"
 	meta "github.com/tiennv147/restless/meta/pb"
-	"github.com/tiennv147/restless/shared"
+	shared "github.com/tiennv147/restless/shared/proto"
 	"google.golang.org/grpc"
 )
 
