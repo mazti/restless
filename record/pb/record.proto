@@ -6,26 +6,38 @@ import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 
 service Record {
-    rpc Create (ListRecordsRequest) returns (Records) {
+    rpc ListRecords (ListRecordsRequest) returns (ListRecordsReply) {
+        option (google.api.http) = {
+            get: "/{base}/{table}"
+        };
+    };
+    rpc CreateRecords (CreateRecordsRequest) returns (ListRecordsReply) {
         option (google.api.http) = {
             post: "/{base}/{table}"
             body: "*"
         };
     };
-
 }
 
 message ListRecordsRequest {
     string base = 1;
     string table = 2;
+    int32 maxRecords = 3;
+    int32 pageSize = 4;
 }
 
-message Records {
+message ListRecordsReply {
     string offset = 1;
-    repeated Record records = 2;
+    repeated RecordMsg records = 2;
 }
 
-message Record {
+message CreateRecordsRequest {
+    string base = 1;
+    string table = 2;
+    repeated RecordMsg records = 3;
+}
+
+message RecordMsg {
     string id = 1;
     google.protobuf.Struct fields = 2;
 }
