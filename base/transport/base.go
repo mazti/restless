@@ -4,7 +4,7 @@ import (
 	"github.com/tiennv147/restless/base/dto"
 	base "github.com/tiennv147/restless/base/pb"
 	"github.com/tiennv147/restless/base/service"
-	"github.com/tiennv147/restless/shared"
+	shared "github.com/tiennv147/restless/shared/proto"
 	netcontext "golang.org/x/net/context"
 )
 
