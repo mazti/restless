@@ -12,13 +12,55 @@
   ],
   "paths": {
     "/{base}/{table}": {
-      "post": {
-        "operationId": "Create",
+      "get": {
+        "operationId": "ListRecords",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbRecords"
+              "$ref": "#/definitions/pbListRecordsReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "base",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "maxRecords",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Record"
+        ]
+      },
+      "post": {
+        "operationId": "CreateRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListRecordsReply"
             }
           }
         },
@@ -40,7 +82,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbListRecordsRequest"
+              "$ref": "#/definitions/pbCreateRecordsRequest"
             }
           }
         ],
@@ -51,7 +93,7 @@
     }
   },
   "definitions": {
-    "pbListRecordsRequest": {
+    "pbCreateRecordsRequest": {
       "type": "object",
       "properties": {
         "base": {
@@ -59,21 +101,16 @@
         },
         "table": {
           "type": "string"
-        }
-      }
-    },
-    "pbRecord": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
         },
-        "fields": {
-          "type": "object"
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbRecordMsg"
+          }
         }
       }
     },
-    "pbRecords": {
+    "pbListRecordsReply": {
       "type": "object",
       "properties": {
         "offset": {
@@ -82,8 +119,19 @@
         "records": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/pbRecord"
+            "$ref": "#/definitions/pbRecordMsg"
           }
+        }
+      }
+    },
+    "pbRecordMsg": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object"
         }
       }
     },
