@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/tiennv147/restless/record/pb"
-	"github.com/tiennv147/restless/record/service"
+	"github.com/mazti/restless/record/pb"
+	"github.com/mazti/restless/record/service"
 )
 
 type grpcServer struct {

@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"github.com/tiennv147/restless/base/config"
-	"github.com/tiennv147/restless/base/dto"
-	"github.com/tiennv147/restless/base/repository"
-	"github.com/tiennv147/restless/meta/pb"
+	"github.com/mazti/restless/base/config"
+	"github.com/mazti/restless/base/dto"
+	"github.com/mazti/restless/base/repository"
+	"github.com/mazti/restless/meta/pb"
 	"google.golang.org/grpc"
 )
 

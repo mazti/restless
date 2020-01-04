@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"database/sql"
-	"github.com/tiennv147/restless/base/pb"
-	"github.com/tiennv147/restless/base/repository"
-	"github.com/tiennv147/restless/base/service"
-	"github.com/tiennv147/restless/base/transport"
+	"github.com/mazti/restless/base/pb"
+	"github.com/mazti/restless/base/repository"
+	"github.com/mazti/restless/base/service"
+	"github.com/mazti/restless/base/transport"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"net"

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/jinzhu/gorm/dialects/mysql" //mysql dialects
-	"github.com/tiennv147/restless/base/dto"
+	"github.com/mazti/restless/base/dto"
 )
 
 type BaseRepository interface {

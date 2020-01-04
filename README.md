@@ -35,11 +35,11 @@ export GOPATH=$HOME/place/to/put/my/go/code
 export GO111MODULE=on
 
 # You can use go built-in tool to clone the code
-go get -d -v github.com/tiennv147/restless
+go get -d -v github.com/mazti/restless
 
 # Or man-handling it
 mkdir -p $GOPATH/src/github.com/tiennv147
-git clone https://github.com/tiennv147/restless.git $GOPATH/src/github.com/tiennv147/restless
+git clone https://github.com/mazti/restless.git $GOPATH/src/github.com/mazti/restless
 ```
 
 ### 4. Installing dependencies (Optional)
@@ -60,7 +60,7 @@ We usually refer to this practice as **vendoring**, hence the name of the utilit
 Install
 ```sh
 # Make sure you're inside of the project directory first
-$GOPATH/src/github.com/tiennv147/restless make install
+$GOPATH/src/github.com/mazti/restless make install
 ```
 
 Commands

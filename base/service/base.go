@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/mazti/restless/base/config"
+	"github.com/mazti/restless/base/dto"
+	"github.com/mazti/restless/base/repository"
+	meta "github.com/mazti/restless/meta/pb"
+	"github.com/mazti/restless/shared"
 	mazti "github.com/tiennv147/mazti-commons/dto"
-	"github.com/tiennv147/restless/base/config"
-	"github.com/tiennv147/restless/base/dto"
-	"github.com/tiennv147/restless/base/repository"
-	meta "github.com/tiennv147/restless/meta/pb"
-	"github.com/tiennv147/restless/shared"
 	"google.golang.org/grpc"
 )
 

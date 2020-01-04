@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/mazti/restless/record/config"
 	"github.com/oklog/oklog/pkg/group"
 	"github.com/spf13/cobra"
-	"github.com/tiennv147/restless/record/config"
 )
 
 var (

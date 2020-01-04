@@ -1,10 +1,10 @@
 package transport
 
 import (
-	"github.com/tiennv147/restless/base/dto"
-	base "github.com/tiennv147/restless/base/pb"
-	"github.com/tiennv147/restless/base/service"
-	"github.com/tiennv147/restless/shared"
+	"github.com/mazti/restless/base/dto"
+	base "github.com/mazti/restless/base/pb"
+	"github.com/mazti/restless/base/service"
+	"github.com/mazti/restless/shared"
 	netcontext "golang.org/x/net/context"
 )
 
@@ -21,7 +21,7 @@ func NewBaseGRPCServer(service service.BaseService) base.BaseServer {
 // Implementations
 
 func (g *baseGRPCServer) Create(ctx netcontext.Context, req *base.CreateBaseRequest) (*base.CreateBaseReply, error) {
-	b, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name,})
+	b, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name})
 	if err != nil {
 		return nil, err
 	}
