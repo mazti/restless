@@ -54,6 +54,44 @@
           "Record"
         ]
       },
+      "delete": {
+        "operationId": "DeleteRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteRecordsReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "base",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "records",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Record"
+        ]
+      },
       "post": {
         "operationId": "CreateRecords",
         "responses": {
@@ -89,6 +127,78 @@
         "tags": [
           "Record"
         ]
+      },
+      "patch": {
+        "operationId": "UpdateRecords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbListRecordsReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "base",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateRecordsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Record"
+        ]
+      }
+    },
+    "/{base}/{table}/{recordID}": {
+      "get": {
+        "operationId": "RetrieveRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRecordMsg"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "base",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "recordID",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Record"
+        ]
       }
     }
   },
@@ -106,6 +216,29 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbRecordMsg"
+          }
+        }
+      }
+    },
+    "pbDeleteRecordResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "deleted": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "pbDeleteRecordsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbDeleteRecordResult"
           }
         }
       }
@@ -132,6 +265,9 @@
         },
         "fields": {
           "type": "object"
+        },
+        "createdTIme": {
+          "type": "string"
         }
       }
     },

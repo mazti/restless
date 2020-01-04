@@ -11,12 +11,29 @@ service Record {
             get: "/{base}/{table}"
         };
     };
+    rpc RetrieveRecord (RetrievesRequest) returns (RecordMsg) {
+        option (google.api.http) = {
+            get: "/{base}/{table}/{recordID}"
+        };
+    };
     rpc CreateRecords (CreateRecordsRequest) returns (ListRecordsReply) {
         option (google.api.http) = {
             post: "/{base}/{table}"
             body: "*"
         };
     };
+    rpc UpdateRecords (CreateRecordsRequest) returns (ListRecordsReply) {
+        option (google.api.http) = {
+            patch: "/{base}/{table}"
+            body: "*"
+        };
+    };
+    rpc DeleteRecords (DeleteRecordsRequest) returns (DeleteRecordsReply) {
+        option (google.api.http) = {
+            delete: "/{base}/{table}"
+        };
+    };
+
 }
 
 message ListRecordsRequest {
@@ -40,4 +57,26 @@ message CreateRecordsRequest {
 message RecordMsg {
     string id = 1;
     google.protobuf.Struct fields = 2;
+    string createdTIme = 3;
+}
+
+message DeleteRecordsRequest {
+    string base = 1;
+    string table = 2;
+    repeated string records = 3;
+}
+
+message DeleteRecordsReply {
+    repeated DeleteRecordResult records = 1;
+}
+
+message DeleteRecordResult {
+    string id = 1;
+    bool deleted = 2;
+}
+
+message RetrievesRequest {
+    string base = 1;
+    string table = 2;
+    string recordID = 3;
 }

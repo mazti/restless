@@ -51,7 +51,7 @@ var (
 // Execute executes the root command.
 func Execute() error {
 	RecordCmd = &cobra.Command{
-		Use:   "meta",
+		Use:   "record",
 		Short: "RESTLESS - " + *Config.Name,
 		Long:  "The Great RESTLESS - " + *Config.Name,
 		Run: func(cmd *cobra.Command, args []string) {
