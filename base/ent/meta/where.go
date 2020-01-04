@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/mazti/restless/newmeta/ent/predicate"
+	"github.com/mazti/restless/base/ent/predicate"
 )
 
 // ID filters vertices based on their identifier.

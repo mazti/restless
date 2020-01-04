@@ -6,7 +6,7 @@ import (
 	"context"
 
 	"github.com/facebookincubator/ent/dialect"
-	"github.com/mazti/restless/newmeta/ent/migrate"
+	"github.com/mazti/restless/base/ent/migrate"
 )
 
 // Tx is a transactional client that is created by calling Client.Tx().

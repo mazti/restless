@@ -2,7 +2,8 @@ package repository
 
 import (
 	"context"
-	"github.com/mazti/restless/newmeta/ent"
+	"github.com/mazti/restless/base/ent"
+	uuid "github.com/satori/go.uuid"
 	"time"
 )
 
@@ -28,7 +29,7 @@ func NewMetaRepository(client *ent.Client) MetaRepository {
 func (repo *metaRepository) Create(ctx context.Context, meta ent.Meta) (*ent.Meta, error) {
 	return repo.client.Meta.Create().
 		SetBase(meta.Base).
-		SetSchema(meta.Schema).
+		SetSchema(uuid.NewV4().String()).
 		Save(ctx)
 }
 

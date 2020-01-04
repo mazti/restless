@@ -2,32 +2,24 @@ package service
 
 import (
 	"context"
-	"github.com/mazti/restless/base/config"
 	"github.com/mazti/restless/base/dto"
 	"github.com/mazti/restless/base/repository"
-	"github.com/mazti/restless/meta/pb"
-	"google.golang.org/grpc"
 )
 
 type TableService interface {
 	Create(ctx context.Context, req dto.CreateTableReq) error
 }
 
-func NewTableService(repo repository.BaseRepository, conf config.Config) (TableService, error) {
-	conn, err := grpc.Dial(conf.Meta, grpc.WithInsecure())
-	if err != nil {
-		return nil, err
-	}
-
+func NewTableService(baseRepo repository.BaseRepository, metaRepo repository.MetaRepository) (TableService, error) {
 	return &tableService{
-		repo:       repo,
-		metaClient: pb.NewMetaClient(conn),
+		repo:     baseRepo,
+		metaRepo: metaRepo,
 	}, nil
 }
 
 type tableService struct {
-	repo       repository.BaseRepository
-	metaClient pb.MetaClient
+	repo     repository.BaseRepository
+	metaRepo repository.MetaRepository
 }
 
 func (h tableService) Create(ctx context.Context, req dto.CreateTableReq) error {

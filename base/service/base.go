@@ -2,14 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
-	"github.com/mazti/restless/base/config"
 	"github.com/mazti/restless/base/dto"
 	"github.com/mazti/restless/base/repository"
-	meta "github.com/mazti/restless/meta/pb"
-	sharedProto "github.com/mazti/restless/shared/proto"
 	sharedDto "github.com/mazti/restless/shared/dto"
-	"google.golang.org/grpc"
 )
 
 type BaseService interface {
@@ -20,86 +15,91 @@ type BaseService interface {
 	Delete(ctx context.Context, id string) error
 }
 
-func NewBaseService(repo repository.BaseRepository, conf config.Config) (BaseService, error) {
-	conn, err := grpc.Dial(conf.Meta, grpc.WithInsecure())
-	if err != nil {
-		return nil, err
-	}
-
+func NewBaseService(baseRepo repository.BaseRepository, metaRepo repository.MetaRepository) (BaseService, error) {
 	return &baseService{
-		repo:       repo,
-		metaClient: meta.NewMetaClient(conn),
+		baseRepo: baseRepo,
+		metaRepo: metaRepo,
 	}, nil
 }
 
 type baseService struct {
-	repo       repository.BaseRepository
-	metaClient meta.MetaClient
+	baseRepo repository.BaseRepository
+	metaRepo repository.MetaRepository
 }
 
 func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dto.BaseResp, err error) {
-	resp, err := h.metaClient.Create(ctx, &meta.CreateMetaRequest{Name: req.Name})
+	resp, err := h.metaRepo.Create(ctx, req.ToMeta())
 	if err != nil {
 		return base, err
 	}
-	if resp == nil {
-		return base, errors.New("create base meta fail")
-	}
-	err = h.repo.CreateSchema(resp.Id)
+	err = h.baseRepo.CreateSchema(resp.Schema)
 	if err != nil {
 		return base, err
 	}
-	return dto.BaseResp{ID: resp.Id, Name: resp.Name}, err
+	id, err := EncodeID(resp.ID)
+	if err != nil {
+		return base, err
+	}
+	return dto.BaseResp{ID: id, Base: resp.Base, Schema: resp.Schema}, err
 }
 
-func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {
-	ret := dto.BaseResp{}
-	m, err := h.metaClient.Get(ctx, &sharedProto.GetRequest{Id: id})
+func (h baseService) Get(ctx context.Context, id string) (resp dto.BaseResp, err error) {
+	metaID, err := DecodeID(id)
 	if err != nil {
-		return ret, err
+		return resp, err
+	}
+	meta, err := h.metaRepo.Get(ctx, metaID)
+	if err != nil {
+		return resp, err
 	}
 	return dto.BaseResp{
-		ID:   m.Id,
-		Name: m.Name,
+		ID:     id,
+		Base:   meta.Base,
+		Schema: meta.Schema,
 	}, nil
 }
 
-func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListBaseResp, error) {
-	ret := dto.ListBaseResp{}
-	reply, err := h.metaClient.List(ctx, &sharedProto.ListRequest{Offset: int32(offset), Limit: int32(limit)})
+func (h baseService) List(ctx context.Context, offset int, limit int) (resp dto.ListBaseResp, err error) {
+	items, err := h.metaRepo.List(ctx, offset, limit)
 	if err != nil {
-		return ret, err
+		return resp, err
 	}
-	ret.Results = make([]dto.BaseResp, reply.Metadata.Count)
-	for i, item := range reply.Metas {
-		ret.Results[i] = dto.BaseResp{
-			ID:   item.Id,
-			Name: item.Name,
+	count := len(items)
+	resp = dto.ListBaseResp{Results: make([]dto.BaseResp, count)}
+	for i, item := range items {
+		id, err := EncodeID(item.ID)
+		if err != nil {
+			return resp, err
 		}
+		resp.Results[i] = dto.BaseResp{ID: id, Base: item.Base, Schema: item.Schema}
 	}
 
-	ret.Metadata = sharedDto.ListMetadata{
-		Count:  int(reply.Metadata.Count),
-		Offset: int(reply.Metadata.Offset),
-		Limit:  int(reply.Metadata.Limit),
-		Total:  int(reply.Metadata.Total),
+	total, _ := h.metaRepo.Count(ctx)
+	resp.Metadata = sharedDto.ListMetadata{
+		Count:  count,
+		Offset: offset,
+		Limit:  limit,
+		Total:  total,
 	}
-	return ret, nil
+	return resp, nil
 }
 
-func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (dto.BaseResp, error) {
-	ret := dto.BaseResp{}
-	m, err := h.metaClient.Update(ctx, &meta.UpdateMetaRequest{Id: req.ID, Name: req.Name})
+func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (resp dto.BaseResp, err error) {
+	meta, err := req.ToMeta(DecodeID)
 	if err != nil {
-		return ret, err
+		return resp, err
 	}
-	return dto.BaseResp{
-		ID:   m.Id,
-		Name: m.Name,
-	}, nil
+	updatedMeta, err := h.metaRepo.Update(ctx, meta)
+	if err != nil {
+		return resp, err
+	}
+	return dto.BaseResp{ID: req.ID, Base: updatedMeta.Base, Schema: updatedMeta.Schema}, nil
 }
 
 func (h baseService) Delete(ctx context.Context, id string) error {
-	_, err := h.metaClient.Delete(ctx, &sharedProto.DeleteRequest{Id: id})
-	return err
+	metaID, err := DecodeID(id)
+	if err != nil {
+		return err
+	}
+	return h.metaRepo.Delete(ctx, metaID)
 }

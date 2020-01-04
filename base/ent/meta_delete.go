@@ -8,8 +8,8 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
-	"github.com/mazti/restless/newmeta/ent/meta"
-	"github.com/mazti/restless/newmeta/ent/predicate"
+	"github.com/mazti/restless/base/ent/meta"
+	"github.com/mazti/restless/base/ent/predicate"
 )
 
 // MetaDelete is the builder for deleting a Meta entity.

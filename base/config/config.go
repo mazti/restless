@@ -8,13 +8,14 @@ import (
 
 // Config stores configuration variables.
 type Config struct {
-	Name       *string
-	Database   *config.Database
-	HTTP       *config.HTTP
-	GRPC       *GRPC
-	Release    *config.Release
-	Meta       string
-	SwaggerDir *string
+	Name         *string
+	IDSalt       *string
+	Database     *config.Database
+	MetaDatabase *config.Database
+	HTTP         *config.HTTP
+	GRPC         *GRPC
+	Release      *config.Release
+	SwaggerDir   *string
 }
 
 // New returns a new config instance.

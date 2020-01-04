@@ -2,7 +2,6 @@ package main
 
 import (
 	base "github.com/mazti/restless/base/cmd"
-	meta "github.com/mazti/restless/newmeta/cmd"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +15,5 @@ var (
 
 func main() {
 	RestlessCmd.AddCommand(base.BaseCmd)
-	RestlessCmd.AddCommand(meta.MetaCmd)
 	RestlessCmd.Execute()
 }

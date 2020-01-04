@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/mazti/restless/newmeta/ent/meta"
+	"github.com/mazti/restless/base/ent/meta"
 )
 
 // Meta is the model entity for the Meta schema.

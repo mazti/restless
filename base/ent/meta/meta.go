@@ -5,7 +5,7 @@ package meta
 import (
 	"time"
 
-	"github.com/mazti/restless/newmeta/ent/schema"
+	"github.com/mazti/restless/base/ent/schema"
 )
 
 const (

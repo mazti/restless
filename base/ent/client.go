@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mazti/restless/newmeta/ent/migrate"
+	"github.com/mazti/restless/base/ent/migrate"
 
-	"github.com/mazti/restless/newmeta/ent/meta"
+	"github.com/mazti/restless/base/ent/meta"
 
 	"github.com/facebookincubator/ent/dialect"
 	"github.com/facebookincubator/ent/dialect/sql"

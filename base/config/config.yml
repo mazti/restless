@@ -1,4 +1,5 @@
 name: "BASE"
+idSalt: "RestlessSalt"
 http:
   listenAddr: ":7070"
   debugAddr: ":7071"
@@ -11,12 +12,14 @@ release:
   releaseVersion: "@RELEASE_VERSION@"
   releaseTime: "@RELEASE_TIME@"
 
-
 database:
   url: root:123456@tcp(restless-db:3306)/?charset=utf8&parseTime=true
   maxIdle: 50
   maxActive: 100
   logMode: true
+
+metaDatabase:
+  url: root:123456@tcp(restless-db:3306)/restless?charset=utf8&parseTime=true
 
 meta: "localhost:10000"
 swaggerDir: "pb"

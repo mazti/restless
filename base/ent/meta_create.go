@@ -9,7 +9,7 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
-	"github.com/mazti/restless/newmeta/ent/meta"
+	"github.com/mazti/restless/base/ent/meta"
 )
 
 // MetaCreate is the builder for creating a Meta entity.

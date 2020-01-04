@@ -151,7 +151,10 @@
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
           "type": "string"
         }
       }
@@ -162,7 +165,10 @@
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
           "type": "string"
         }
       }
@@ -170,7 +176,7 @@
     "pbCreateBaseRequest": {
       "type": "object",
       "properties": {
-        "name": {
+        "base": {
           "type": "string"
         }
       }
@@ -181,7 +187,10 @@
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
           "type": "string"
         }
       }
@@ -206,7 +215,10 @@
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
           "type": "string"
         }
       }
@@ -217,7 +229,7 @@
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
           "type": "string"
         }
       }
