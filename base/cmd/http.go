@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/tiennv147/restless/base/pb"
+	"github.com/mazti/restless/base/pb"
 	"log"
 	"net"
 	"net/http"

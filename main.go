@@ -1,9 +1,9 @@
 package main
 
 import (
+	base "github.com/mazti/restless/base/cmd"
+	meta "github.com/mazti/restless/meta/cmd"
 	"github.com/spf13/cobra"
-	meta "github.com/tiennv147/restless/meta/cmd"
-	base "github.com/tiennv147/restless/base/cmd"
 )
 
 var (

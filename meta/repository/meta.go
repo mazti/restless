@@ -3,8 +3,8 @@ package repository
 import (
 	"github.com/jinzhu/gorm"
 
+	"github.com/mazti/restless/meta/model"
 	"github.com/tiennv147/mazti-commons/errors"
-	"github.com/tiennv147/restless/meta/model"
 )
 
 type MetaRepository interface {

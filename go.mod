@@ -1,4 +1,4 @@
-module github.com/tiennv147/restless
+module github.com/mazti/restless
 
 go 1.12
 

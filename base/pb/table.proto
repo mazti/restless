@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "google/api/annotations.proto";
-import "github.com/tiennv147/restless/shared/proto/shared.proto";
+import "github.com/mazti/restless/shared/proto/shared.proto";
 
 service Table {
     rpc Create (CreateTableRequest) returns (shared.EmptyMsg) {

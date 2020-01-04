@@ -4,10 +4,10 @@ import (
 	"context"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql" //mysql dialects
+	"github.com/mazti/restless/meta/dto"
+	"github.com/mazti/restless/meta/model"
+	"github.com/mazti/restless/meta/repository"
 	cdto "github.com/tiennv147/mazti-commons/dto"
-	"github.com/tiennv147/restless/meta/dto"
-	"github.com/tiennv147/restless/meta/model"
-	"github.com/tiennv147/restless/meta/repository"
 )
 
 type MetaService interface {
@@ -25,7 +25,7 @@ func NewMetaService(repo repository.MetaRepository) MetaService {
 }
 
 type metaService struct {
-	repo   repository.MetaRepository
+	repo repository.MetaRepository
 }
 
 func getMeta(req dto.CreateMetaReq) model.Meta {

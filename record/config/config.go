@@ -24,7 +24,7 @@ func New() (*Config, error) {
 	v.SetConfigType("yml")
 	v.SetConfigName("config")
 	v.AddConfigPath("./")
-	v.AddConfigPath("$GOPATH/src/github.com/tiennv147/restless/record/config/.")
+	v.AddConfigPath("$GOPATH/src/github.com/mazti/restless/record/config/.")
 
 	if err := v.ReadInConfig(); err != nil {
 		return nil, err

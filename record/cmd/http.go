@@ -11,7 +11,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"github.com/tiennv147/restless/record/pb"
+	"github.com/mazti/restless/record/pb"
 )
 
 func RunHTTP(listener net.Listener, opts ...runtime.ServeMuxOption) error {
