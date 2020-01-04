@@ -21,13 +21,14 @@ func NewBaseGRPCServer(service service.BaseService) base.BaseServer {
 // Implementations
 
 func (g *baseGRPCServer) Create(ctx netcontext.Context, req *base.CreateBaseRequest) (*base.CreateBaseReply, error) {
-	b, err := g.baseService.Create(ctx, dto.CreateBaseReq{Name: req.Name})
+	resp, err := g.baseService.Create(ctx, dto.CreateBaseReq{Base: req.Base})
 	if err != nil {
 		return nil, err
 	}
 	return &base.CreateBaseReply{
-		Id:   b.ID,
-		Name: b.Name,
+		Id:     resp.ID,
+		Base:   resp.Base,
+		Schema: resp.Schema,
 	}, nil
 }
 
@@ -37,8 +38,9 @@ func (g *baseGRPCServer) Get(ctx netcontext.Context, req *shared.GetRequest) (*b
 		return nil, err
 	}
 	return &base.GetBaseReply{
-		Id:   resp.ID,
-		Name: resp.Name,
+		Id:     resp.ID,
+		Base:   resp.Base,
+		Schema: resp.Schema,
 	}, nil
 }
 
@@ -49,7 +51,7 @@ func (g *baseGRPCServer) List(ctx netcontext.Context, req *shared.ListRequest) (
 	}
 	var bases []*base.BaseModel
 	for _, u := range resp.Results {
-		su := base.BaseModel{Id: u.ID, Name: u.Name}
+		su := base.BaseModel{Id: u.ID, Base: u.Base, Schema: u.Schema}
 		bases = append(bases, &su)
 	}
 	return &base.ListBaseReply{
@@ -58,19 +60,20 @@ func (g *baseGRPCServer) List(ctx netcontext.Context, req *shared.ListRequest) (
 			Count:  int32(resp.Metadata.Count),
 			Limit:  int32(resp.Metadata.Limit),
 			Offset: int32(resp.Metadata.Offset),
-			Total:  resp.Metadata.Total,
+			Total:  int32(resp.Metadata.Total),
 		},
 	}, nil
 }
 
 func (g *baseGRPCServer) Update(ctx netcontext.Context, req *base.UpdateBaseRequest) (*base.UpdateBaseReply, error) {
-	resp, err := g.baseService.Update(ctx, dto.UpdateBaseReq{ID: req.Id, Name: req.Name})
+	resp, err := g.baseService.Update(ctx, dto.UpdateBaseReq{ID: req.Id, Base: req.Base})
 	if err != nil {
 		return nil, err
 	}
 	return &base.UpdateBaseReply{
-		Id:   resp.ID,
-		Name: resp.Name,
+		Id:     resp.ID,
+		Base:   resp.Base,
+		Schema: resp.Schema,
 	}, nil
 }
 

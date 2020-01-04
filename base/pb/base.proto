@@ -36,17 +36,19 @@ service Base {
 }
 
 message CreateBaseRequest {
-    string name = 1;
+    string base = 1;
 }
 
 message CreateBaseReply {
     string id = 1;
-    string name = 2;
+    string base = 2;
+    string schema = 3;
 }
 
 message GetBaseReply {
     string id = 1;
-    string name = 2;
+    string base = 2;
+    string schema = 3;
 }
 
 message ListBaseReply {
@@ -56,15 +58,17 @@ message ListBaseReply {
 
 message UpdateBaseRequest {
     string id = 1;
-    string name = 2;
+    string base = 2;
 }
 
 message UpdateBaseReply {
     string id = 1;
-    string name = 2;
+    string base = 2;
+    string schema = 3;
 }
 
 message BaseModel {
     string id = 1;
-    string name = 2;
+    string base = 2;
+    string schema = 3;
 }
