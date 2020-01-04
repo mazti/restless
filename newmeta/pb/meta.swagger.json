@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "base/pb/base.proto",
+    "title": "newmeta/pb/meta.proto",
     "version": "version not set"
   },
   "consumes": [
@@ -11,14 +11,14 @@
     "application/json"
   ],
   "paths": {
-    "/base": {
+    "/meta": {
       "get": {
         "operationId": "List",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbListBaseReply"
+              "$ref": "#/definitions/pbListMetaReply"
             }
           }
         },
@@ -39,7 +39,7 @@
           }
         ],
         "tags": [
-          "Base"
+          "Meta"
         ]
       },
       "post": {
@@ -48,7 +48,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateBaseReply"
+              "$ref": "#/definitions/pbCreateMetaReply"
             }
           }
         },
@@ -58,23 +58,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateBaseRequest"
+              "$ref": "#/definitions/pbCreateMetaRequest"
             }
           }
         ],
         "tags": [
-          "Base"
+          "Meta"
         ]
       }
     },
-    "/base/{id}": {
+    "/meta/{id}": {
       "get": {
         "operationId": "Get",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbGetBaseReply"
+              "$ref": "#/definitions/pbGetMetaReply"
             }
           }
         },
@@ -87,7 +87,7 @@
           }
         ],
         "tags": [
-          "Base"
+          "Meta"
         ]
       },
       "delete": {
@@ -109,7 +109,7 @@
           }
         ],
         "tags": [
-          "Base"
+          "Meta"
         ]
       },
       "patch": {
@@ -118,7 +118,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbUpdateBaseReply"
+              "$ref": "#/definitions/pbUpdateMetaReply"
             }
           }
         },
@@ -134,65 +134,60 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbUpdateBaseRequest"
+              "$ref": "#/definitions/pbUpdateMetaRequest"
             }
           }
         ],
         "tags": [
-          "Base"
+          "Meta"
         ]
       }
     }
   },
   "definitions": {
-    "pbBaseModel": {
+    "pbCreateMetaReply": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
           "type": "string"
         }
       }
     },
-    "pbCreateBaseReply": {
+    "pbCreateMetaRequest": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetMetaReply": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "pbCreateBaseRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "pbGetBaseReply": {
-      "type": "object",
-      "properties": {
-        "id": {
+        "base": {
           "type": "string"
         },
-        "name": {
+        "schema": {
           "type": "string"
         }
       }
     },
-    "pbListBaseReply": {
+    "pbListMetaReply": {
       "type": "object",
       "properties": {
-        "bases": {
+        "metas": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/pbBaseModel"
+            "$ref": "#/definitions/pbMetaModel"
           }
         },
         "metadata": {
@@ -200,24 +195,41 @@
         }
       }
     },
-    "pbUpdateBaseReply": {
+    "pbMetaModel": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
           "type": "string"
         }
       }
     },
-    "pbUpdateBaseRequest": {
+    "pbUpdateMetaReply": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "name": {
+        "base": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateMetaRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "base": {
           "type": "string"
         }
       }

@@ -7,7 +7,7 @@ import (
 	"github.com/mazti/restless/meta/dto"
 	"github.com/mazti/restless/meta/model"
 	"github.com/mazti/restless/meta/repository"
-	cdto "github.com/tiennv147/mazti-commons/dto"
+	shared "github.com/mazti/restless/shared/dto"
 )
 
 type MetaService interface {
@@ -81,7 +81,7 @@ func (h metaService) List(ctx context.Context, offset int, limit int) (dto.ListM
 
 	total, _ := h.repo.Count()
 
-	ret.Metadata = cdto.ListMetadata{
+	ret.Metadata = shared.ListMetadata{
 		Count:  count,
 		Offset: offset,
 		Limit:  limit,

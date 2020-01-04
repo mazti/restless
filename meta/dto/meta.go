@@ -1,7 +1,7 @@
 package dto
 
 import (
-	cdto "github.com/tiennv147/mazti-commons/dto"
+	shared "github.com/mazti/restless/shared/dto"
 )
 
 type CreateMetaReq struct {
@@ -19,6 +19,6 @@ type UpdateMetaReq struct {
 }
 
 type ListMetaResp struct {
-	Metadata cdto.ListMetadata `json:"metadata"`
+	Metadata shared.ListMetadata `json:"metadata"`
 	Results  []MetaResp        `json:"results"`
 }

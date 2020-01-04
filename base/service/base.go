@@ -7,8 +7,8 @@ import (
 	"github.com/mazti/restless/base/dto"
 	"github.com/mazti/restless/base/repository"
 	meta "github.com/mazti/restless/meta/pb"
-	shared "github.com/mazti/restless/shared/proto"
-	mazti "github.com/tiennv147/mazti-commons/dto"
+	sharedProto "github.com/mazti/restless/shared/proto"
+	sharedDto "github.com/mazti/restless/shared/dto"
 	"google.golang.org/grpc"
 )
 
@@ -54,7 +54,7 @@ func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dt
 
 func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {
 	ret := dto.BaseResp{}
-	m, err := h.metaClient.Get(ctx, &shared.GetRequest{Id: id})
+	m, err := h.metaClient.Get(ctx, &sharedProto.GetRequest{Id: id})
 	if err != nil {
 		return ret, err
 	}
@@ -66,7 +66,7 @@ func (h baseService) Get(ctx context.Context, id string) (dto.BaseResp, error) {
 
 func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListBaseResp, error) {
 	ret := dto.ListBaseResp{}
-	reply, err := h.metaClient.List(ctx, &shared.ListRequest{Offset: int32(offset), Limit: int32(limit)})
+	reply, err := h.metaClient.List(ctx, &sharedProto.ListRequest{Offset: int32(offset), Limit: int32(limit)})
 	if err != nil {
 		return ret, err
 	}
@@ -78,11 +78,11 @@ func (h baseService) List(ctx context.Context, offset int, limit int) (dto.ListB
 		}
 	}
 
-	ret.Metadata = mazti.ListMetadata{
+	ret.Metadata = sharedDto.ListMetadata{
 		Count:  int(reply.Metadata.Count),
 		Offset: int(reply.Metadata.Offset),
 		Limit:  int(reply.Metadata.Limit),
-		Total:  reply.Metadata.Total,
+		Total:  int(reply.Metadata.Total),
 	}
 	return ret, nil
 }
@@ -100,6 +100,6 @@ func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (dto.Bas
 }
 
 func (h baseService) Delete(ctx context.Context, id string) error {
-	_, err := h.metaClient.Delete(ctx, &shared.DeleteRequest{Id: id})
+	_, err := h.metaClient.Delete(ctx, &sharedProto.DeleteRequest{Id: id})
 	return err
 }

@@ -13,7 +13,7 @@ type MetaRepository interface {
 	List(offset int, limit int) ([]model.Meta, error)
 	Update(meta model.Meta) error
 	Delete(id string) error
-	Count() (int64, error)
+	Count() (int, error)
 }
 
 type metaRepository struct {
@@ -63,8 +63,8 @@ func (repo *metaRepository) Delete(id string) error {
 	return r.Error
 }
 
-func (repo *metaRepository) Count() (int64, error) {
-	var count int64
+func (repo *metaRepository) Count() (int, error) {
+	var count int
 	err := repo.db.Model(&model.Meta{}).Count(&count)
 	return count, err.Error
 }

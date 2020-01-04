@@ -1,7 +1,7 @@
 package dto
 
 import (
-	mazti "github.com/tiennv147/mazti-commons/dto"
+	shared "github.com/mazti/restless/shared/dto"
 )
 
 type CreateBaseReq struct {
@@ -19,6 +19,6 @@ type UpdateBaseReq struct {
 }
 
 type ListBaseResp struct {
-	Metadata mazti.ListMetadata `json:"metadata"`
+	Metadata shared.ListMetadata `json:"metadata"`
 	Results  []BaseResp         `json:"results"`
 }

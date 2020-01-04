@@ -58,7 +58,7 @@ func (g *baseGRPCServer) List(ctx netcontext.Context, req *shared.ListRequest) (
 			Count:  int32(resp.Metadata.Count),
 			Limit:  int32(resp.Metadata.Limit),
 			Offset: int32(resp.Metadata.Offset),
-			Total:  resp.Metadata.Total,
+			Total:  int32(resp.Metadata.Total),
 		},
 	}, nil
 }
