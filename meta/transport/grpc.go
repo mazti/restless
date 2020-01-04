@@ -1,10 +1,10 @@
 package transport
 
 import (
-	"github.com/tiennv147/restless/meta/dto"
-	meta "github.com/tiennv147/restless/meta/pb"
-	"github.com/tiennv147/restless/meta/service"
-	shared "github.com/tiennv147/restless/shared/proto"
+	"github.com/mazti/restless/meta/dto"
+	meta "github.com/mazti/restless/meta/pb"
+	"github.com/mazti/restless/meta/service"
+	shared "github.com/mazti/restless/shared/proto"
 
 	netcontext "golang.org/x/net/context"
 )
@@ -22,7 +22,7 @@ func NewGRPCServer(service service.MetaService) meta.MetaServer {
 // Implementations
 
 func (g *grpcServer) Create(ctx netcontext.Context, req *meta.CreateMetaRequest) (*meta.CreateMetaReply, error) {
-	resp, err := g.metaService.Create(ctx, dto.CreateMetaReq{Name: req.Name,})
+	resp, err := g.metaService.Create(ctx, dto.CreateMetaReq{Name: req.Name})
 	if err != nil {
 		return nil, err
 	}

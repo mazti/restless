@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 import "google/api/annotations.proto";
-import "github.com/tiennv147/restless/shared/proto/shared.proto";
+import "github.com/mazti/restless/shared/proto/shared.proto";
 
 service Base {
     rpc Create (CreateBaseRequest) returns (CreateBaseReply) {

@@ -1,12 +1,12 @@
 package cmd
 
 import (
+	"github.com/mazti/restless/meta/model"
+	"github.com/mazti/restless/meta/pb"
+	"github.com/mazti/restless/meta/repository"
+	"github.com/mazti/restless/meta/service"
+	"github.com/mazti/restless/meta/transport"
 	"github.com/tiennv147/mazti-commons/db"
-	"github.com/tiennv147/restless/meta/model"
-	"github.com/tiennv147/restless/meta/pb"
-	"github.com/tiennv147/restless/meta/repository"
-	"github.com/tiennv147/restless/meta/service"
-	"github.com/tiennv147/restless/meta/transport"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"net"

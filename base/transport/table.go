@@ -1,10 +1,10 @@
 package transport
 
 import (
-	"github.com/tiennv147/restless/base/dto"
-	base "github.com/tiennv147/restless/base/pb"
-	"github.com/tiennv147/restless/base/service"
-	shared "github.com/tiennv147/restless/shared/proto"
+	"github.com/mazti/restless/base/dto"
+	base "github.com/mazti/restless/base/pb"
+	"github.com/mazti/restless/base/service"
+	shared "github.com/mazti/restless/shared/proto"
 	netcontext "golang.org/x/net/context"
 )
 

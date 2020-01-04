@@ -8,11 +8,11 @@ import (
 
 // Config stores configuration variables.
 type Config struct {
-	Name *string
-	Database *config.Database
-	HTTP     *config.HTTP
-	GRPC     *GRPC
-	Release  *config.Release
+	Name       *string
+	Database   *config.Database
+	HTTP       *config.HTTP
+	GRPC       *GRPC
+	Release    *config.Release
 	SwaggerDir *string
 }
 
@@ -24,7 +24,7 @@ func New() (*Config, error) {
 	v.SetConfigType("yml")
 	v.SetConfigName("config")
 	v.AddConfigPath("./")
-	v.AddConfigPath("$GOPATH/src/github.com/tiennv147/restless/meta/config/.")
+	v.AddConfigPath("$GOPATH/src/github.com/mazti/restless/meta/config/.")
 
 	if err := v.ReadInConfig(); err != nil {
 		return nil, err

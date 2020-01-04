@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/tiennv147/restless/base/cmd"
+	"github.com/mazti/restless/base/cmd"
 )
 
 func main() {
