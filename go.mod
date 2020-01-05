@@ -14,6 +14,7 @@ require (
 	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2
+	github.com/stretchr/testify v1.4.0
 	github.com/tiennv147/mazti-commons v0.0.3-0.20191225181958-8ad400bb19c5
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
 	google.golang.org/genproto v0.0.0-20190927181202-20e1ac93f88c
