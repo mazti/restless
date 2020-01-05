@@ -15,7 +15,7 @@ import (
 var (
 	Config, _ = config.New()
 	RecordCmd = &cobra.Command{
-		Use:   "Record",
+		Use:   "record",
 		Short: "RESTLESS - " + *Config.Name,
 		Long:  "The Great RESTLESS - " + *Config.Name,
 		Run: func(cmd *cobra.Command, args []string) {

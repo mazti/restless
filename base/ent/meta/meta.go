@@ -21,6 +21,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at vertex property in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deleted_at vertex property in the database.
+	FieldDeletedAt = "deleted_at"
 
 	// Table holds the table name of the meta in the database.
 	Table = "meta"
@@ -33,6 +35,7 @@ var Columns = []string{
 	FieldSchema,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDeletedAt,
 }
 
 var (

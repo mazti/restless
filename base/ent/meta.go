@@ -24,6 +24,8 @@ type Meta struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -32,6 +34,7 @@ func (*Meta) scanValues() []interface{} {
 		&sql.NullInt64{},
 		&sql.NullString{},
 		&sql.NullString{},
+		&sql.NullTime{},
 		&sql.NullTime{},
 		&sql.NullTime{},
 	}
@@ -69,6 +72,12 @@ func (m *Meta) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		m.UpdatedAt = value.Time
 	}
+	if value, ok := values[4].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field deleted_at", values[4])
+	} else if value.Valid {
+		m.DeletedAt = new(time.Time)
+		*m.DeletedAt = value.Time
+	}
 	return nil
 }
 
@@ -103,6 +112,10 @@ func (m *Meta) String() string {
 	builder.WriteString(m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")
 	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
+	if v := m.DeletedAt; v != nil {
+		builder.WriteString(", deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }
