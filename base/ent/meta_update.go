@@ -17,7 +17,6 @@ import (
 type MetaUpdate struct {
 	config
 	base            *string
-	schema          *string
 	created_at      *time.Time
 	updated_at      *time.Time
 	deleted_at      *time.Time
@@ -34,12 +33,6 @@ func (mu *MetaUpdate) Where(ps ...predicate.Meta) *MetaUpdate {
 // SetBase sets the base field.
 func (mu *MetaUpdate) SetBase(s string) *MetaUpdate {
 	mu.base = &s
-	return mu
-}
-
-// SetSchema sets the schema field.
-func (mu *MetaUpdate) SetSchema(s string) *MetaUpdate {
-	mu.schema = &s
 	return mu
 }
 
@@ -144,13 +137,6 @@ func (mu *MetaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: meta.FieldBase,
 		})
 	}
-	if value := mu.schema; value != nil {
-		spec.Fields.Set = append(spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  *value,
-			Column: meta.FieldSchema,
-		})
-	}
 	if value := mu.created_at; value != nil {
 		spec.Fields.Set = append(spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -192,7 +178,6 @@ type MetaUpdateOne struct {
 	config
 	id              int
 	base            *string
-	schema          *string
 	created_at      *time.Time
 	updated_at      *time.Time
 	deleted_at      *time.Time
@@ -202,12 +187,6 @@ type MetaUpdateOne struct {
 // SetBase sets the base field.
 func (muo *MetaUpdateOne) SetBase(s string) *MetaUpdateOne {
 	muo.base = &s
-	return muo
-}
-
-// SetSchema sets the schema field.
-func (muo *MetaUpdateOne) SetSchema(s string) *MetaUpdateOne {
-	muo.schema = &s
 	return muo
 }
 
@@ -304,13 +283,6 @@ func (muo *MetaUpdateOne) sqlSave(ctx context.Context) (m *Meta, err error) {
 			Type:   field.TypeString,
 			Value:  *value,
 			Column: meta.FieldBase,
-		})
-	}
-	if value := muo.schema; value != nil {
-		spec.Fields.Set = append(spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  *value,
-			Column: meta.FieldSchema,
 		})
 	}
 	if value := muo.created_at; value != nil {

@@ -5,9 +5,16 @@ import (
 	"log"
 )
 
-var hashID *hashids.HashID
+type IDService interface {
+	EncodeID(id int) (string, error)
+	DecodeID(id string) (int, error)
+}
 
-func Init(salt string) {
+type idService struct {
+	hashID *hashids.HashID
+}
+
+func NewIDService(salt string) IDService {
 	hd := hashids.NewData()
 	hd.Salt = salt
 	hd.MinLength = 30
@@ -15,15 +22,15 @@ func Init(salt string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	hashID = h
+	return &idService{hashID: h}
 }
 
-func EncodeID(id int) (string, error) {
-	return hashID.Encode([]int{id})
+func (s idService) EncodeID(id int) (string, error) {
+	return s.hashID.Encode([]int{id})
 }
 
-func DecodeID(id string) (int, error) {
-	ids, err := hashID.DecodeWithError(id)
+func (s idService) DecodeID(id string) (int, error) {
+	ids, err := s.hashID.DecodeWithError(id)
 	if err != nil {
 		return 0, err
 	}

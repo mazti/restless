@@ -17,16 +17,14 @@ func NewBaseResp(meta *ent.Meta, EncodeID func(id int) (string, error)) (resp Ba
 	return BaseResp{
 		ID:        id,
 		Base:      meta.Base,
-		Schema:    meta.Schema,
-		CreatedAt: meta.CreatedAt.Unix(),
-		UpdatedAt: meta.UpdatedAt.Unix(),
+		CreatedAt: meta.CreatedAt.UnixNano() / 1000000,
+		UpdatedAt: meta.UpdatedAt.UnixNano() / 1000000,
 	}, nil
 }
 
 type BaseResp struct {
 	ID        string `json:"id"`
 	Base      string `json:"base"`
-	Schema    string `json:"schema"`
 	CreatedAt int64  `json:"created_at"`
 	UpdatedAt int64  `json:"updated_at"`
 }

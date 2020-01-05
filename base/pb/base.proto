@@ -42,7 +42,6 @@ message CreateBaseRequest {
 message CreateBaseReply {
     string id = 1;
     string base = 2;
-    string schema = 3;
     int64 created_at = 4;
     int64 updated_at = 5;
 }
@@ -50,7 +49,6 @@ message CreateBaseReply {
 message GetBaseReply {
     string id = 1;
     string base = 2;
-    string schema = 3;
     int64 created_at = 4;
     int64 updated_at = 5;
 }
@@ -68,7 +66,6 @@ message UpdateBaseRequest {
 message UpdateBaseReply {
     string id = 1;
     string base = 2;
-    string schema = 3;
     int64 created_at = 4;
     int64 updated_at = 5;
 }
@@ -76,7 +73,6 @@ message UpdateBaseReply {
 message BaseModel {
     string id = 1;
     string base = 2;
-    string schema = 3;
     int64 created_at = 4;
     int64 updated_at = 5;
 }

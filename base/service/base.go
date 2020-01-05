@@ -15,16 +15,18 @@ type BaseService interface {
 	Delete(ctx context.Context, id string) error
 }
 
-func NewBaseService(baseRepo repository.BaseRepository, metaRepo repository.MetaRepository) (BaseService, error) {
+func NewBaseService(baseRepo repository.BaseRepository, metaRepo repository.MetaRepository, idService IDService) (BaseService, error) {
 	return &baseService{
-		baseRepo: baseRepo,
-		metaRepo: metaRepo,
+		baseRepo:  baseRepo,
+		metaRepo:  metaRepo,
+		idService: idService,
 	}, nil
 }
 
 type baseService struct {
-	baseRepo repository.BaseRepository
-	metaRepo repository.MetaRepository
+	baseRepo  repository.BaseRepository
+	metaRepo  repository.MetaRepository
+	idService IDService
 }
 
 func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dto.BaseResp, err error) {
@@ -32,15 +34,16 @@ func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dt
 	if err != nil {
 		return base, err
 	}
-	err = h.baseRepo.CreateSchema(resp.Schema)
+	schemaName, _ := h.idService.EncodeID(resp.ID)
+	err = h.baseRepo.CreateSchema(schemaName)
 	if err != nil {
 		return base, err
 	}
-	return dto.NewBaseResp(resp, EncodeID)
+	return dto.NewBaseResp(resp, h.idService.EncodeID)
 }
 
 func (h baseService) Get(ctx context.Context, id string) (resp dto.BaseResp, err error) {
-	metaID, err := DecodeID(id)
+	metaID, err := h.idService.DecodeID(id)
 	if err != nil {
 		return resp, err
 	}
@@ -48,7 +51,7 @@ func (h baseService) Get(ctx context.Context, id string) (resp dto.BaseResp, err
 	if err != nil {
 		return resp, err
 	}
-	return dto.NewBaseResp(meta, EncodeID)
+	return dto.NewBaseResp(meta, h.idService.EncodeID)
 }
 
 func (h baseService) List(ctx context.Context, offset int, limit int) (resp dto.ListBaseResp, err error) {
@@ -59,7 +62,7 @@ func (h baseService) List(ctx context.Context, offset int, limit int) (resp dto.
 	count := len(items)
 	resp = dto.ListBaseResp{Results: make([]dto.BaseResp, count)}
 	for i, item := range items {
-		baseResp, err := dto.NewBaseResp(item, EncodeID)
+		baseResp, err := dto.NewBaseResp(item, h.idService.EncodeID)
 		if err != nil {
 			return resp, err
 		}
@@ -77,7 +80,7 @@ func (h baseService) List(ctx context.Context, offset int, limit int) (resp dto.
 }
 
 func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (resp dto.BaseResp, err error) {
-	meta, err := req.ToMeta(DecodeID)
+	meta, err := req.ToMeta(h.idService.DecodeID)
 	if err != nil {
 		return resp, err
 	}
@@ -85,14 +88,18 @@ func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (resp dt
 	if err != nil {
 		return resp, err
 	}
-	return dto.NewBaseResp(updatedMeta, EncodeID)
+	return dto.NewBaseResp(updatedMeta, h.idService.EncodeID)
 }
 
 func (h baseService) Delete(ctx context.Context, id string) error {
-	metaID, err := DecodeID(id)
+	metaID, err := h.idService.DecodeID(id)
 	if err != nil {
 		return err
 	}
 	_, err = h.metaRepo.Delete(ctx, metaID)
 	return err
 }
+
+//func (h baseService) newSchemaName(m *ent.Meta) (string, error) {
+//	return h.idService.EncodeID(m.ID)
+//}

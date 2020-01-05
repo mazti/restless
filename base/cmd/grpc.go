@@ -15,7 +15,7 @@ import (
 )
 
 func RunGRPC(listener net.Listener) error {
-	service.Init(*Config.IDSalt)
+	idService := service.NewIDService(*Config.IDSalt)
 
 	db, err := sql.Open("mysql", Config.Database.URL)
 	CheckError(err)
@@ -33,7 +33,7 @@ func RunGRPC(listener net.Listener) error {
 	}
 	metaRepo := repository.NewMetaRepository(client)
 
-	baseService, err := service.NewBaseService(baseRepository, metaRepo)
+	baseService, err := service.NewBaseService(baseRepository, metaRepo, idService)
 	tableService, err := service.NewTableService(baseRepository, metaRepo)
 	CheckError(err)
 

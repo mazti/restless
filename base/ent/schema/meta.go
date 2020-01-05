@@ -15,8 +15,6 @@ type Meta struct {
 func (Meta) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("base"),
-		field.String("schema").
-			Unique(),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").
