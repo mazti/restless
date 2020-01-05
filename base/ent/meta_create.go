@@ -16,7 +16,6 @@ import (
 type MetaCreate struct {
 	config
 	base       *string
-	schema     *string
 	created_at *time.Time
 	updated_at *time.Time
 	deleted_at *time.Time
@@ -25,12 +24,6 @@ type MetaCreate struct {
 // SetBase sets the base field.
 func (mc *MetaCreate) SetBase(s string) *MetaCreate {
 	mc.base = &s
-	return mc
-}
-
-// SetSchema sets the schema field.
-func (mc *MetaCreate) SetSchema(s string) *MetaCreate {
-	mc.schema = &s
 	return mc
 }
 
@@ -81,9 +74,6 @@ func (mc *MetaCreate) Save(ctx context.Context) (*Meta, error) {
 	if mc.base == nil {
 		return nil, errors.New("ent: missing required field \"base\"")
 	}
-	if mc.schema == nil {
-		return nil, errors.New("ent: missing required field \"schema\"")
-	}
 	if mc.created_at == nil {
 		v := meta.DefaultCreatedAt()
 		mc.created_at = &v
@@ -122,14 +112,6 @@ func (mc *MetaCreate) sqlSave(ctx context.Context) (*Meta, error) {
 			Column: meta.FieldBase,
 		})
 		m.Base = *value
-	}
-	if value := mc.schema; value != nil {
-		spec.Fields = append(spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  *value,
-			Column: meta.FieldSchema,
-		})
-		m.Schema = *value
 	}
 	if value := mc.created_at; value != nil {
 		spec.Fields = append(spec.Fields, &sqlgraph.FieldSpec{

@@ -15,8 +15,6 @@ const (
 	FieldID = "id"
 	// FieldBase holds the string denoting the base vertex property in the database.
 	FieldBase = "base"
-	// FieldSchema holds the string denoting the schema vertex property in the database.
-	FieldSchema = "schema"
 	// FieldCreatedAt holds the string denoting the created_at vertex property in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at vertex property in the database.
@@ -32,7 +30,6 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldBase,
-	FieldSchema,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
@@ -42,12 +39,12 @@ var (
 	fields = schema.Meta{}.Fields()
 
 	// descCreatedAt is the schema descriptor for created_at field.
-	descCreatedAt = fields[2].Descriptor()
+	descCreatedAt = fields[1].Descriptor()
 	// DefaultCreatedAt holds the default value on creation for the created_at field.
 	DefaultCreatedAt = descCreatedAt.Default.(func() time.Time)
 
 	// descUpdatedAt is the schema descriptor for updated_at field.
-	descUpdatedAt = fields[3].Descriptor()
+	descUpdatedAt = fields[2].Descriptor()
 	// DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	DefaultUpdatedAt = descUpdatedAt.Default.(func() time.Time)
 )

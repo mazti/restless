@@ -18,8 +18,6 @@ type Meta struct {
 	ID int `json:"id,omitempty"`
 	// Base holds the value of the "base" field.
 	Base string `json:"base,omitempty"`
-	// Schema holds the value of the "schema" field.
-	Schema string `json:"schema,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -32,7 +30,6 @@ type Meta struct {
 func (*Meta) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},
-		&sql.NullString{},
 		&sql.NullString{},
 		&sql.NullTime{},
 		&sql.NullTime{},
@@ -57,23 +54,18 @@ func (m *Meta) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		m.Base = value.String
 	}
-	if value, ok := values[1].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field schema", values[1])
-	} else if value.Valid {
-		m.Schema = value.String
-	}
-	if value, ok := values[2].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field created_at", values[2])
+	if value, ok := values[1].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field created_at", values[1])
 	} else if value.Valid {
 		m.CreatedAt = value.Time
 	}
-	if value, ok := values[3].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field updated_at", values[3])
+	if value, ok := values[2].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field updated_at", values[2])
 	} else if value.Valid {
 		m.UpdatedAt = value.Time
 	}
-	if value, ok := values[4].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field deleted_at", values[4])
+	if value, ok := values[3].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field deleted_at", values[3])
 	} else if value.Valid {
 		m.DeletedAt = new(time.Time)
 		*m.DeletedAt = value.Time
@@ -106,8 +98,6 @@ func (m *Meta) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", m.ID))
 	builder.WriteString(", base=")
 	builder.WriteString(m.Base)
-	builder.WriteString(", schema=")
-	builder.WriteString(m.Schema)
 	builder.WriteString(", created_at=")
 	builder.WriteString(m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

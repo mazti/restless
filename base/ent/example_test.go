@@ -33,7 +33,6 @@ func ExampleMeta() {
 	m := client.Meta.
 		Create().
 		SetBase("string").
-		SetSchema("string").
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetDeletedAt(time.Now()).

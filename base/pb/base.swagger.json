@@ -154,9 +154,6 @@
         "base": {
           "type": "string"
         },
-        "schema": {
-          "type": "string"
-        },
         "created_at": {
           "type": "string",
           "format": "int64"
@@ -174,9 +171,6 @@
           "type": "string"
         },
         "base": {
-          "type": "string"
-        },
-        "schema": {
           "type": "string"
         },
         "created_at": {
@@ -204,9 +198,6 @@
           "type": "string"
         },
         "base": {
-          "type": "string"
-        },
-        "schema": {
           "type": "string"
         },
         "created_at": {
@@ -240,9 +231,6 @@
           "type": "string"
         },
         "base": {
-          "type": "string"
-        },
-        "schema": {
           "type": "string"
         },
         "created_at": {
