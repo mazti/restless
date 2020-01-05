@@ -19,6 +19,7 @@ type MetaCreate struct {
 	schema     *string
 	created_at *time.Time
 	updated_at *time.Time
+	deleted_at *time.Time
 }
 
 // SetBase sets the base field.
@@ -57,6 +58,20 @@ func (mc *MetaCreate) SetUpdatedAt(t time.Time) *MetaCreate {
 func (mc *MetaCreate) SetNillableUpdatedAt(t *time.Time) *MetaCreate {
 	if t != nil {
 		mc.SetUpdatedAt(*t)
+	}
+	return mc
+}
+
+// SetDeletedAt sets the deleted_at field.
+func (mc *MetaCreate) SetDeletedAt(t time.Time) *MetaCreate {
+	mc.deleted_at = &t
+	return mc
+}
+
+// SetNillableDeletedAt sets the deleted_at field if the given value is not nil.
+func (mc *MetaCreate) SetNillableDeletedAt(t *time.Time) *MetaCreate {
+	if t != nil {
+		mc.SetDeletedAt(*t)
 	}
 	return mc
 }
@@ -131,6 +146,14 @@ func (mc *MetaCreate) sqlSave(ctx context.Context) (*Meta, error) {
 			Column: meta.FieldUpdatedAt,
 		})
 		m.UpdatedAt = *value
+	}
+	if value := mc.deleted_at; value != nil {
+		spec.Fields = append(spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  *value,
+			Column: meta.FieldDeletedAt,
+		})
+		m.DeletedAt = value
 	}
 	if err := sqlgraph.CreateNode(ctx, mc.driver, spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {

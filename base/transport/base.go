@@ -6,6 +6,7 @@ import (
 	"github.com/mazti/restless/base/service"
 	shared "github.com/mazti/restless/shared/proto"
 	netcontext "golang.org/x/net/context"
+	"log"
 )
 
 type baseGRPCServer struct {
@@ -26,9 +27,11 @@ func (g *baseGRPCServer) Create(ctx netcontext.Context, req *base.CreateBaseRequ
 		return nil, err
 	}
 	return &base.CreateBaseReply{
-		Id:     resp.ID,
-		Base:   resp.Base,
-		Schema: resp.Schema,
+		Id:        resp.ID,
+		Base:      resp.Base,
+		Schema:    resp.Schema,
+		CreatedAt: resp.CreatedAt,
+		UpdatedAt: resp.UpdatedAt,
 	}, nil
 }
 
@@ -38,20 +41,29 @@ func (g *baseGRPCServer) Get(ctx netcontext.Context, req *shared.GetRequest) (*b
 		return nil, err
 	}
 	return &base.GetBaseReply{
-		Id:     resp.ID,
-		Base:   resp.Base,
-		Schema: resp.Schema,
+		Id:        resp.ID,
+		Base:      resp.Base,
+		Schema:    resp.Schema,
+		CreatedAt: resp.CreatedAt,
+		UpdatedAt: resp.UpdatedAt,
 	}, nil
 }
 
 func (g *baseGRPCServer) List(ctx netcontext.Context, req *shared.ListRequest) (*base.ListBaseReply, error) {
+	log.Println(req)
 	resp, err := g.baseService.List(ctx, int(req.Offset), int(req.Limit))
 	if err != nil {
 		return nil, err
 	}
 	var bases []*base.BaseModel
 	for _, u := range resp.Results {
-		su := base.BaseModel{Id: u.ID, Base: u.Base, Schema: u.Schema}
+		su := base.BaseModel{
+			Id:        u.ID,
+			Base:      u.Base,
+			Schema:    u.Schema,
+			CreatedAt: u.CreatedAt,
+			UpdatedAt: u.UpdatedAt,
+		}
 		bases = append(bases, &su)
 	}
 	return &base.ListBaseReply{
@@ -71,9 +83,11 @@ func (g *baseGRPCServer) Update(ctx netcontext.Context, req *base.UpdateBaseRequ
 		return nil, err
 	}
 	return &base.UpdateBaseReply{
-		Id:     resp.ID,
-		Base:   resp.Base,
-		Schema: resp.Schema,
+		Id:        resp.ID,
+		Base:      resp.Base,
+		Schema:    resp.Schema,
+		CreatedAt: resp.CreatedAt,
+		UpdatedAt: resp.UpdatedAt,
 	}, nil
 }
 

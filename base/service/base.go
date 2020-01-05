@@ -36,11 +36,7 @@ func (h baseService) Create(ctx context.Context, req dto.CreateBaseReq) (base dt
 	if err != nil {
 		return base, err
 	}
-	id, err := EncodeID(resp.ID)
-	if err != nil {
-		return base, err
-	}
-	return dto.BaseResp{ID: id, Base: resp.Base, Schema: resp.Schema}, err
+	return dto.NewBaseResp(resp, EncodeID)
 }
 
 func (h baseService) Get(ctx context.Context, id string) (resp dto.BaseResp, err error) {
@@ -52,11 +48,7 @@ func (h baseService) Get(ctx context.Context, id string) (resp dto.BaseResp, err
 	if err != nil {
 		return resp, err
 	}
-	return dto.BaseResp{
-		ID:     id,
-		Base:   meta.Base,
-		Schema: meta.Schema,
-	}, nil
+	return dto.NewBaseResp(meta, EncodeID)
 }
 
 func (h baseService) List(ctx context.Context, offset int, limit int) (resp dto.ListBaseResp, err error) {
@@ -67,11 +59,11 @@ func (h baseService) List(ctx context.Context, offset int, limit int) (resp dto.
 	count := len(items)
 	resp = dto.ListBaseResp{Results: make([]dto.BaseResp, count)}
 	for i, item := range items {
-		id, err := EncodeID(item.ID)
+		baseResp, err := dto.NewBaseResp(item, EncodeID)
 		if err != nil {
 			return resp, err
 		}
-		resp.Results[i] = dto.BaseResp{ID: id, Base: item.Base, Schema: item.Schema}
+		resp.Results[i] = baseResp
 	}
 
 	total, _ := h.metaRepo.Count(ctx)
@@ -93,7 +85,7 @@ func (h baseService) Update(ctx context.Context, req dto.UpdateBaseReq) (resp dt
 	if err != nil {
 		return resp, err
 	}
-	return dto.BaseResp{ID: req.ID, Base: updatedMeta.Base, Schema: updatedMeta.Schema}, nil
+	return dto.NewBaseResp(updatedMeta, EncodeID)
 }
 
 func (h baseService) Delete(ctx context.Context, id string) error {
@@ -101,5 +93,6 @@ func (h baseService) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
-	return h.metaRepo.Delete(ctx, metaID)
+	_, err = h.metaRepo.Delete(ctx, metaID)
+	return err
 }

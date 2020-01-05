@@ -21,6 +21,9 @@ func (Meta) Fields() []ent.Field {
 			Default(time.Now),
 		field.Time("updated_at").
 			Default(time.Now),
+		field.Time("deleted_at").
+			Optional().
+			Nillable(),
 	}
 }
 

@@ -156,6 +156,14 @@
         },
         "schema": {
           "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
@@ -170,6 +178,14 @@
         },
         "schema": {
           "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
@@ -192,6 +208,14 @@
         },
         "schema": {
           "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
@@ -220,6 +244,14 @@
         },
         "schema": {
           "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

@@ -36,6 +36,7 @@ func ExampleMeta() {
 		SetSchema("string").
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
 		SaveX(ctx)
 	log.Println("meta created:", m)
 

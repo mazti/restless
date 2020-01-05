@@ -16,11 +16,13 @@ import (
 // MetaUpdate is the builder for updating Meta entities.
 type MetaUpdate struct {
 	config
-	base       *string
-	schema     *string
-	created_at *time.Time
-	updated_at *time.Time
-	predicates []predicate.Meta
+	base            *string
+	schema          *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	cleardeleted_at bool
+	predicates      []predicate.Meta
 }
 
 // Where adds a new predicate for the builder.
@@ -66,6 +68,27 @@ func (mu *MetaUpdate) SetNillableUpdatedAt(t *time.Time) *MetaUpdate {
 	if t != nil {
 		mu.SetUpdatedAt(*t)
 	}
+	return mu
+}
+
+// SetDeletedAt sets the deleted_at field.
+func (mu *MetaUpdate) SetDeletedAt(t time.Time) *MetaUpdate {
+	mu.deleted_at = &t
+	return mu
+}
+
+// SetNillableDeletedAt sets the deleted_at field if the given value is not nil.
+func (mu *MetaUpdate) SetNillableDeletedAt(t *time.Time) *MetaUpdate {
+	if t != nil {
+		mu.SetDeletedAt(*t)
+	}
+	return mu
+}
+
+// ClearDeletedAt clears the value of deleted_at.
+func (mu *MetaUpdate) ClearDeletedAt() *MetaUpdate {
+	mu.deleted_at = nil
+	mu.cleardeleted_at = true
 	return mu
 }
 
@@ -142,6 +165,19 @@ func (mu *MetaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: meta.FieldUpdatedAt,
 		})
 	}
+	if value := mu.deleted_at; value != nil {
+		spec.Fields.Set = append(spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  *value,
+			Column: meta.FieldDeletedAt,
+		})
+	}
+	if mu.cleardeleted_at {
+		spec.Fields.Clear = append(spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: meta.FieldDeletedAt,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -154,11 +190,13 @@ func (mu *MetaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // MetaUpdateOne is the builder for updating a single Meta entity.
 type MetaUpdateOne struct {
 	config
-	id         int
-	base       *string
-	schema     *string
-	created_at *time.Time
-	updated_at *time.Time
+	id              int
+	base            *string
+	schema          *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	cleardeleted_at bool
 }
 
 // SetBase sets the base field.
@@ -198,6 +236,27 @@ func (muo *MetaUpdateOne) SetNillableUpdatedAt(t *time.Time) *MetaUpdateOne {
 	if t != nil {
 		muo.SetUpdatedAt(*t)
 	}
+	return muo
+}
+
+// SetDeletedAt sets the deleted_at field.
+func (muo *MetaUpdateOne) SetDeletedAt(t time.Time) *MetaUpdateOne {
+	muo.deleted_at = &t
+	return muo
+}
+
+// SetNillableDeletedAt sets the deleted_at field if the given value is not nil.
+func (muo *MetaUpdateOne) SetNillableDeletedAt(t *time.Time) *MetaUpdateOne {
+	if t != nil {
+		muo.SetDeletedAt(*t)
+	}
+	return muo
+}
+
+// ClearDeletedAt clears the value of deleted_at.
+func (muo *MetaUpdateOne) ClearDeletedAt() *MetaUpdateOne {
+	muo.deleted_at = nil
+	muo.cleardeleted_at = true
 	return muo
 }
 
@@ -266,6 +325,19 @@ func (muo *MetaUpdateOne) sqlSave(ctx context.Context) (m *Meta, err error) {
 			Type:   field.TypeTime,
 			Value:  *value,
 			Column: meta.FieldUpdatedAt,
+		})
+	}
+	if value := muo.deleted_at; value != nil {
+		spec.Fields.Set = append(spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  *value,
+			Column: meta.FieldDeletedAt,
+		})
+	}
+	if muo.cleardeleted_at {
+		spec.Fields.Clear = append(spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: meta.FieldDeletedAt,
 		})
 	}
 	m = &Meta{config: muo.config}

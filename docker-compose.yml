@@ -18,7 +18,7 @@ services:
       #      MYSQL_DATABASE: 'restless'
     ports:
       - '3306:3306'
-    volumes:
-      - restless-db:/var/lib/mysql
+#    volumes:
+#      - restless-db:/var/lib/mysql
 volumes:
   restless-db:
