@@ -2,24 +2,21 @@ package service
 
 import (
 	"context"
-	"github.com/mazti/restless/base/dto"
-	"github.com/mazti/restless/base/ent"
 	"testing"
 
+	"github.com/mazti/restless/base/dto"
+	"github.com/mazti/restless/base/ent"
+	"github.com/mazti/restless/base/repository/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-
-	"github.com/mazti/restless/base/repository/mocks"
 )
 
-
-
-func CommonVaribleTest() (*mocks.BaseRepository,*mocks.MetaRepository, BaseService, error)  {
+func createTestSuite() (*mocks.BaseRepository, *mocks.MetaRepository, BaseService, error) {
 	idService := NewIDService("salt")
 	baseRepo := &mocks.BaseRepository{}
 	metaRepo := &mocks.MetaRepository{}
-	baseService, err := NewBaseService(baseRepo, metaRepo,idService)
-	return baseRepo,metaRepo,baseService,err
+	baseService, err := NewBaseService(baseRepo, metaRepo, idService)
+	return baseRepo, metaRepo, baseService, err
 }
 
 // unit test for create Base
@@ -28,16 +25,16 @@ func TestCreateBaseSuccessfully(t *testing.T) {
 
 	ctx := context.Background()
 
-	baseRepo,metaRepo,baseService,err := CommonVaribleTest()
+	baseRepo, metaRepo, baseService, err := createTestSuite()
+	assert.Nil(t, err)
+	assert.NotNil(t, baseService)
+
 	metaResp := &ent.Meta{
 		Base: baseName,
 	}
-	//baseRepo
-	metaRepo.On("Create", ctx, mock.Anything).Return(metaResp, nil)
-	baseRepo.On("CreateSchema", mock.Anything ).Return(nil)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, baseService)
+	metaRepo.On("Create", ctx, mock.Anything).Return(metaResp, nil)
+	baseRepo.On("CreateSchema", mock.Anything).Return(nil)
 
 	req := dto.CreateBaseReq{
 		Base: baseName,
@@ -52,39 +49,28 @@ func TestGetBaseSuccessfully(t *testing.T) {
 
 	id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
 	ctx := context.Background()
-	_,metaRepo,baseService,err := CommonVaribleTest()
-
-	metaRepo.On("Get",ctx,id).Return(nil)
-
+	_, metaRepo, baseService, err := createTestSuite()
 	assert.Nil(t, err)
 	assert.NotNil(t, baseService)
 
-	//req := dto.BaseResp{
-	//	ID: "",
-	//	Base :"",
-	//	Schema:"",
-	//	CreatedAt:1,
-	//	UpdatedAt:1,
-	//
-	//}
+	metaRepo.On("Get", ctx, id).Return(nil)
 
 	resp, getErr := baseService.Get(ctx, id)
 
-	assert.Nil(t,getErr)
-	assert.Equal(t,resp,dto.BaseResp{})
+	assert.Nil(t, getErr)
+	assert.Equal(t, resp, dto.BaseResp{})
 }
+
 func TestDeleteBaseSuccessfully(t *testing.T) {
 	id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
 	ctx := context.Background()
-	_,metaRepo,baseService,err := CommonVaribleTest()
-
-	metaRepo.On("Delete",ctx,id).Return(nil)
-
+	_, metaRepo, baseService, err := createTestSuite()
 	assert.Nil(t, err)
 	assert.NotNil(t, baseService)
 
+	metaRepo.On("Delete", ctx, id).Return(nil)
 
-	 getErr := baseService.Delete(ctx, id)
+	getErr := baseService.Delete(ctx, id)
 
-	assert.Nil(t,getErr)
+	assert.Nil(t, getErr)
 }
