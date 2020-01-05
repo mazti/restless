@@ -54,6 +54,10 @@ go mod vendor
 We usually refer to this practice as **vendoring**, hence the name of the utility
 
 ### 5. Run the tests
+```bash
+go test ./...
+
+```
 
 ### 6. Install and Run as CLI tool
 
