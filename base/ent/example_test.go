@@ -16,7 +16,7 @@ import (
 //
 var dsn string
 
-func ExampleMeta() {
+func ExampleMetaSchema() {
 	if dsn == "" {
 		return
 	}
@@ -27,17 +27,17 @@ func ExampleMeta() {
 	}
 	defer drv.Close()
 	client := NewClient(Driver(drv))
-	// creating vertices for the meta's edges.
+	// creating vertices for the metaschema's edges.
 
-	// create meta vertex with its edges.
-	m := client.Meta.
+	// create metaschema vertex with its edges.
+	ms := client.MetaSchema.
 		Create().
 		SetBase("string").
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetDeletedAt(time.Now()).
 		SaveX(ctx)
-	log.Println("meta created:", m)
+	log.Println("metaschema created:", ms)
 
 	// query edges.
 

@@ -31,10 +31,10 @@ func RunGRPC(listener net.Listener) error {
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
-	metaRepo := repository.NewMetaRepository(client)
+	metaSchemaRepo := repository.NewMetaRepository(client)
 
-	baseService, err := service.NewBaseService(baseRepository, metaRepo, idService)
-	tableService, err := service.NewTableService(baseRepository, metaRepo)
+	baseService, err := service.NewBaseService(baseRepository, metaSchemaRepo, idService)
+	tableService, err := service.NewTableService(baseRepository)
 	CheckError(err)
 
 	s := grpc.NewServer()

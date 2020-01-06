@@ -9,7 +9,7 @@ import (
 
 	"github.com/mazti/restless/base/ent/migrate"
 
-	"github.com/mazti/restless/base/ent/meta"
+	"github.com/mazti/restless/base/ent/metaschema"
 
 	"github.com/facebookincubator/ent/dialect"
 	"github.com/facebookincubator/ent/dialect/sql"
@@ -20,8 +20,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Meta is the client for interacting with the Meta builders.
-	Meta *MetaClient
+	// MetaSchema is the client for interacting with the MetaSchema builders.
+	MetaSchema *MetaSchemaClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -29,9 +29,9 @@ func NewClient(opts ...Option) *Client {
 	c := config{log: log.Println}
 	c.options(opts...)
 	return &Client{
-		config: c,
-		Schema: migrate.NewSchema(c.driver),
-		Meta:   NewMetaClient(c),
+		config:     c,
+		Schema:     migrate.NewSchema(c.driver),
+		MetaSchema: NewMetaSchemaClient(c),
 	}
 }
 
@@ -62,15 +62,15 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	}
 	cfg := config{driver: tx, log: c.log, debug: c.debug}
 	return &Tx{
-		config: cfg,
-		Meta:   NewMetaClient(cfg),
+		config:     cfg,
+		MetaSchema: NewMetaSchemaClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Meta.
+//		MetaSchema.
 //		Query().
 //		Count(ctx)
 //
@@ -80,9 +80,9 @@ func (c *Client) Debug() *Client {
 	}
 	cfg := config{driver: dialect.Debug(c.driver, c.log), log: c.log, debug: true}
 	return &Client{
-		config: cfg,
-		Schema: migrate.NewSchema(cfg.driver),
-		Meta:   NewMetaClient(cfg),
+		config:     cfg,
+		Schema:     migrate.NewSchema(cfg.driver),
+		MetaSchema: NewMetaSchemaClient(cfg),
 	}
 }
 
@@ -91,66 +91,66 @@ func (c *Client) Close() error {
 	return c.driver.Close()
 }
 
-// MetaClient is a client for the Meta schema.
-type MetaClient struct {
+// MetaSchemaClient is a client for the MetaSchema schema.
+type MetaSchemaClient struct {
 	config
 }
 
-// NewMetaClient returns a client for the Meta from the given config.
-func NewMetaClient(c config) *MetaClient {
-	return &MetaClient{config: c}
+// NewMetaSchemaClient returns a client for the MetaSchema from the given config.
+func NewMetaSchemaClient(c config) *MetaSchemaClient {
+	return &MetaSchemaClient{config: c}
 }
 
-// Create returns a create builder for Meta.
-func (c *MetaClient) Create() *MetaCreate {
-	return &MetaCreate{config: c.config}
+// Create returns a create builder for MetaSchema.
+func (c *MetaSchemaClient) Create() *MetaSchemaCreate {
+	return &MetaSchemaCreate{config: c.config}
 }
 
-// Update returns an update builder for Meta.
-func (c *MetaClient) Update() *MetaUpdate {
-	return &MetaUpdate{config: c.config}
+// Update returns an update builder for MetaSchema.
+func (c *MetaSchemaClient) Update() *MetaSchemaUpdate {
+	return &MetaSchemaUpdate{config: c.config}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *MetaClient) UpdateOne(m *Meta) *MetaUpdateOne {
-	return c.UpdateOneID(m.ID)
+func (c *MetaSchemaClient) UpdateOne(ms *MetaSchema) *MetaSchemaUpdateOne {
+	return c.UpdateOneID(ms.ID)
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *MetaClient) UpdateOneID(id int) *MetaUpdateOne {
-	return &MetaUpdateOne{config: c.config, id: id}
+func (c *MetaSchemaClient) UpdateOneID(id int) *MetaSchemaUpdateOne {
+	return &MetaSchemaUpdateOne{config: c.config, id: id}
 }
 
-// Delete returns a delete builder for Meta.
-func (c *MetaClient) Delete() *MetaDelete {
-	return &MetaDelete{config: c.config}
+// Delete returns a delete builder for MetaSchema.
+func (c *MetaSchemaClient) Delete() *MetaSchemaDelete {
+	return &MetaSchemaDelete{config: c.config}
 }
 
 // DeleteOne returns a delete builder for the given entity.
-func (c *MetaClient) DeleteOne(m *Meta) *MetaDeleteOne {
-	return c.DeleteOneID(m.ID)
+func (c *MetaSchemaClient) DeleteOne(ms *MetaSchema) *MetaSchemaDeleteOne {
+	return c.DeleteOneID(ms.ID)
 }
 
 // DeleteOneID returns a delete builder for the given id.
-func (c *MetaClient) DeleteOneID(id int) *MetaDeleteOne {
-	return &MetaDeleteOne{c.Delete().Where(meta.ID(id))}
+func (c *MetaSchemaClient) DeleteOneID(id int) *MetaSchemaDeleteOne {
+	return &MetaSchemaDeleteOne{c.Delete().Where(metaschema.ID(id))}
 }
 
-// Create returns a query builder for Meta.
-func (c *MetaClient) Query() *MetaQuery {
-	return &MetaQuery{config: c.config}
+// Create returns a query builder for MetaSchema.
+func (c *MetaSchemaClient) Query() *MetaSchemaQuery {
+	return &MetaSchemaQuery{config: c.config}
 }
 
-// Get returns a Meta entity by its id.
-func (c *MetaClient) Get(ctx context.Context, id int) (*Meta, error) {
-	return c.Query().Where(meta.ID(id)).Only(ctx)
+// Get returns a MetaSchema entity by its id.
+func (c *MetaSchemaClient) Get(ctx context.Context, id int) (*MetaSchema, error) {
+	return c.Query().Where(metaschema.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *MetaClient) GetX(ctx context.Context, id int) *Meta {
-	m, err := c.Get(ctx, id)
+func (c *MetaSchemaClient) GetX(ctx context.Context, id int) *MetaSchema {
+	ms, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return m
+	return ms
 }

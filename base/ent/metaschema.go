@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/mazti/restless/base/ent/meta"
+	"github.com/mazti/restless/base/ent/metaschema"
 )
 
-// Meta is the model entity for the Meta schema.
-type Meta struct {
+// MetaSchema is the model entity for the MetaSchema schema.
+type MetaSchema struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -27,7 +27,7 @@ type Meta struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Meta) scanValues() []interface{} {
+func (*MetaSchema) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},
 		&sql.NullString{},
@@ -38,71 +38,71 @@ func (*Meta) scanValues() []interface{} {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Meta fields.
-func (m *Meta) assignValues(values ...interface{}) error {
-	if m, n := len(values), len(meta.Columns); m != n {
+// to the MetaSchema fields.
+func (ms *MetaSchema) assignValues(values ...interface{}) error {
+	if m, n := len(values), len(metaschema.Columns); m != n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	value, ok := values[0].(*sql.NullInt64)
 	if !ok {
 		return fmt.Errorf("unexpected type %T for field id", value)
 	}
-	m.ID = int(value.Int64)
+	ms.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field base", values[0])
 	} else if value.Valid {
-		m.Base = value.String
+		ms.Base = value.String
 	}
 	if value, ok := values[1].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field created_at", values[1])
 	} else if value.Valid {
-		m.CreatedAt = value.Time
+		ms.CreatedAt = value.Time
 	}
 	if value, ok := values[2].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field updated_at", values[2])
 	} else if value.Valid {
-		m.UpdatedAt = value.Time
+		ms.UpdatedAt = value.Time
 	}
 	if value, ok := values[3].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field deleted_at", values[3])
 	} else if value.Valid {
-		m.DeletedAt = new(time.Time)
-		*m.DeletedAt = value.Time
+		ms.DeletedAt = new(time.Time)
+		*ms.DeletedAt = value.Time
 	}
 	return nil
 }
 
-// Update returns a builder for updating this Meta.
-// Note that, you need to call Meta.Unwrap() before calling this method, if this Meta
+// Update returns a builder for updating this MetaSchema.
+// Note that, you need to call MetaSchema.Unwrap() before calling this method, if this MetaSchema
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (m *Meta) Update() *MetaUpdateOne {
-	return (&MetaClient{m.config}).UpdateOne(m)
+func (ms *MetaSchema) Update() *MetaSchemaUpdateOne {
+	return (&MetaSchemaClient{ms.config}).UpdateOne(ms)
 }
 
 // Unwrap unwraps the entity that was returned from a transaction after it was closed,
 // so that all next queries will be executed through the driver which created the transaction.
-func (m *Meta) Unwrap() *Meta {
-	tx, ok := m.config.driver.(*txDriver)
+func (ms *MetaSchema) Unwrap() *MetaSchema {
+	tx, ok := ms.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Meta is not a transactional entity")
+		panic("ent: MetaSchema is not a transactional entity")
 	}
-	m.config.driver = tx.drv
-	return m
+	ms.config.driver = tx.drv
+	return ms
 }
 
 // String implements the fmt.Stringer.
-func (m *Meta) String() string {
+func (ms *MetaSchema) String() string {
 	var builder strings.Builder
-	builder.WriteString("Meta(")
-	builder.WriteString(fmt.Sprintf("id=%v", m.ID))
+	builder.WriteString("MetaSchema(")
+	builder.WriteString(fmt.Sprintf("id=%v", ms.ID))
 	builder.WriteString(", base=")
-	builder.WriteString(m.Base)
+	builder.WriteString(ms.Base)
 	builder.WriteString(", created_at=")
-	builder.WriteString(m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(ms.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")
-	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
-	if v := m.DeletedAt; v != nil {
+	builder.WriteString(ms.UpdatedAt.Format(time.ANSIC))
+	if v := ms.DeletedAt; v != nil {
 		builder.WriteString(", deleted_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
@@ -110,11 +110,11 @@ func (m *Meta) String() string {
 	return builder.String()
 }
 
-// MetaSlice is a parsable slice of Meta.
-type MetaSlice []*Meta
+// MetaSchemas is a parsable slice of MetaSchema.
+type MetaSchemas []*MetaSchema
 
-func (m MetaSlice) config(cfg config) {
-	for _i := range m {
-		m[_i].config = cfg
+func (ms MetaSchemas) config(cfg config) {
+	for _i := range ms {
+		ms[_i].config = cfg
 	}
 }

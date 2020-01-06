@@ -7,12 +7,12 @@ import (
 )
 
 // Meta holds the schema definition for the Meta entity.
-type Meta struct {
+type MetaSchema struct {
 	ent.Schema
 }
 
 // Fields of the Meta.
-func (Meta) Fields() []ent.Field {
+func (MetaSchema) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("base"),
 		field.Time("created_at").
@@ -26,6 +26,6 @@ func (Meta) Fields() []ent.Field {
 }
 
 // Edges of the Meta.
-func (Meta) Edges() []ent.Edge {
+func (MetaSchema) Edges() []ent.Edge {
 	return nil
 }

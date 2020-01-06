@@ -10,16 +10,14 @@ type TableService interface {
 	Create(ctx context.Context, req dto.CreateTableReq) error
 }
 
-func NewTableService(baseRepo repository.BaseRepository, metaRepo repository.MetaRepository) (TableService, error) {
+func NewTableService(baseRepo repository.BaseRepository) (TableService, error) {
 	return &tableService{
 		repo:     baseRepo,
-		metaRepo: metaRepo,
 	}, nil
 }
 
 type tableService struct {
 	repo     repository.BaseRepository
-	metaRepo repository.MetaRepository
 }
 
 func (h tableService) Create(ctx context.Context, req dto.CreateTableReq) error {

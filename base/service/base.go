@@ -15,7 +15,7 @@ type BaseService interface {
 	Delete(ctx context.Context, id string) error
 }
 
-func NewBaseService(baseRepo repository.BaseRepository, metaRepo repository.MetaRepository, idService IDService) (BaseService, error) {
+func NewBaseService(baseRepo repository.BaseRepository, metaRepo repository.MetaSchemaRepository, idService IDService) (BaseService, error) {
 	return &baseService{
 		baseRepo:  baseRepo,
 		metaRepo:  metaRepo,
@@ -25,7 +25,7 @@ func NewBaseService(baseRepo repository.BaseRepository, metaRepo repository.Meta
 
 type baseService struct {
 	baseRepo  repository.BaseRepository
-	metaRepo  repository.MetaRepository
+	metaRepo  repository.MetaSchemaRepository
 	idService IDService
 }
 
@@ -99,7 +99,3 @@ func (h baseService) Delete(ctx context.Context, id string) error {
 	_, err = h.metaRepo.Delete(ctx, metaID)
 	return err
 }
-
-//func (h baseService) newSchemaName(m *ent.Meta) (string, error) {
-//	return h.idService.EncodeID(m.ID)
-//}
