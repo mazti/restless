@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/mazti/restless/base/ent/metaschema"
+	"github.com/mazti/restless/base/ent/metatable"
 	"github.com/mazti/restless/base/ent/predicate"
 )
 
@@ -21,6 +22,8 @@ type MetaSchemaUpdate struct {
 	updated_at      *time.Time
 	deleted_at      *time.Time
 	cleardeleted_at bool
+	tables          map[int]struct{}
+	removedTables   map[int]struct{}
 	predicates      []predicate.MetaSchema
 }
 
@@ -83,6 +86,46 @@ func (msu *MetaSchemaUpdate) ClearDeletedAt() *MetaSchemaUpdate {
 	msu.deleted_at = nil
 	msu.cleardeleted_at = true
 	return msu
+}
+
+// AddTableIDs adds the tables edge to MetaTable by ids.
+func (msu *MetaSchemaUpdate) AddTableIDs(ids ...int) *MetaSchemaUpdate {
+	if msu.tables == nil {
+		msu.tables = make(map[int]struct{})
+	}
+	for i := range ids {
+		msu.tables[ids[i]] = struct{}{}
+	}
+	return msu
+}
+
+// AddTables adds the tables edges to MetaTable.
+func (msu *MetaSchemaUpdate) AddTables(m ...*MetaTable) *MetaSchemaUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return msu.AddTableIDs(ids...)
+}
+
+// RemoveTableIDs removes the tables edge to MetaTable by ids.
+func (msu *MetaSchemaUpdate) RemoveTableIDs(ids ...int) *MetaSchemaUpdate {
+	if msu.removedTables == nil {
+		msu.removedTables = make(map[int]struct{})
+	}
+	for i := range ids {
+		msu.removedTables[ids[i]] = struct{}{}
+	}
+	return msu
+}
+
+// RemoveTables removes tables edges to MetaTable.
+func (msu *MetaSchemaUpdate) RemoveTables(m ...*MetaTable) *MetaSchemaUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return msu.RemoveTableIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -164,6 +207,44 @@ func (msu *MetaSchemaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: metaschema.FieldDeletedAt,
 		})
 	}
+	if nodes := msu.removedTables; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metaschema.TablesTable,
+			Columns: []string{metaschema.TablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metatable.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Clear = append(spec.Edges.Clear, edge)
+	}
+	if nodes := msu.tables; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metaschema.TablesTable,
+			Columns: []string{metaschema.TablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metatable.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Add = append(spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, msu.driver, spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -182,6 +263,8 @@ type MetaSchemaUpdateOne struct {
 	updated_at      *time.Time
 	deleted_at      *time.Time
 	cleardeleted_at bool
+	tables          map[int]struct{}
+	removedTables   map[int]struct{}
 }
 
 // SetBase sets the base field.
@@ -237,6 +320,46 @@ func (msuo *MetaSchemaUpdateOne) ClearDeletedAt() *MetaSchemaUpdateOne {
 	msuo.deleted_at = nil
 	msuo.cleardeleted_at = true
 	return msuo
+}
+
+// AddTableIDs adds the tables edge to MetaTable by ids.
+func (msuo *MetaSchemaUpdateOne) AddTableIDs(ids ...int) *MetaSchemaUpdateOne {
+	if msuo.tables == nil {
+		msuo.tables = make(map[int]struct{})
+	}
+	for i := range ids {
+		msuo.tables[ids[i]] = struct{}{}
+	}
+	return msuo
+}
+
+// AddTables adds the tables edges to MetaTable.
+func (msuo *MetaSchemaUpdateOne) AddTables(m ...*MetaTable) *MetaSchemaUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return msuo.AddTableIDs(ids...)
+}
+
+// RemoveTableIDs removes the tables edge to MetaTable by ids.
+func (msuo *MetaSchemaUpdateOne) RemoveTableIDs(ids ...int) *MetaSchemaUpdateOne {
+	if msuo.removedTables == nil {
+		msuo.removedTables = make(map[int]struct{})
+	}
+	for i := range ids {
+		msuo.removedTables[ids[i]] = struct{}{}
+	}
+	return msuo
+}
+
+// RemoveTables removes tables edges to MetaTable.
+func (msuo *MetaSchemaUpdateOne) RemoveTables(m ...*MetaTable) *MetaSchemaUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return msuo.RemoveTableIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -311,6 +434,44 @@ func (msuo *MetaSchemaUpdateOne) sqlSave(ctx context.Context) (ms *MetaSchema, e
 			Type:   field.TypeTime,
 			Column: metaschema.FieldDeletedAt,
 		})
+	}
+	if nodes := msuo.removedTables; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metaschema.TablesTable,
+			Columns: []string{metaschema.TablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metatable.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Clear = append(spec.Edges.Clear, edge)
+	}
+	if nodes := msuo.tables; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metaschema.TablesTable,
+			Columns: []string{metaschema.TablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metatable.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Add = append(spec.Edges.Add, edge)
 	}
 	ms = &MetaSchema{config: msuo.config}
 	spec.Assign = ms.assignValues

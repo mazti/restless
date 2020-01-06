@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/mazti/restless/base/ent/metaschema"
+	"github.com/mazti/restless/base/ent/metatable"
 	"github.com/mazti/restless/base/ent/predicate"
 )
 
@@ -49,6 +50,18 @@ func (msq *MetaSchemaQuery) Offset(offset int) *MetaSchemaQuery {
 func (msq *MetaSchemaQuery) Order(o ...Order) *MetaSchemaQuery {
 	msq.order = append(msq.order, o...)
 	return msq
+}
+
+// QueryTables chains the current query on the tables edge.
+func (msq *MetaSchemaQuery) QueryTables() *MetaTableQuery {
+	query := &MetaTableQuery{config: msq.config}
+	step := sqlgraph.NewStep(
+		sqlgraph.From(metaschema.Table, metaschema.FieldID, msq.sqlQuery()),
+		sqlgraph.To(metatable.Table, metatable.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, metaschema.TablesTable, metaschema.TablesColumn),
+	)
+	query.sql = sqlgraph.SetNeighbors(msq.driver.Dialect(), step)
+	return query
 }
 
 // First returns the first MetaSchema entity in the query. Returns *ErrNotFound when no metaschema was found.

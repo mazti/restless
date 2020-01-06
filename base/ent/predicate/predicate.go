@@ -8,3 +8,6 @@ import (
 
 // MetaSchema is the predicate function for metaschema builders.
 type MetaSchema func(*sql.Selector)
+
+// MetaTable is the predicate function for metatable builders.
+type MetaTable func(*sql.Selector)

@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/mazti/restless/base/ent/metaschema"
+	"github.com/mazti/restless/base/ent/metatable"
 )
 
 // MetaSchemaCreate is the builder for creating a MetaSchema entity.
@@ -19,6 +20,7 @@ type MetaSchemaCreate struct {
 	created_at *time.Time
 	updated_at *time.Time
 	deleted_at *time.Time
+	tables     map[int]struct{}
 }
 
 // SetBase sets the base field.
@@ -67,6 +69,26 @@ func (msc *MetaSchemaCreate) SetNillableDeletedAt(t *time.Time) *MetaSchemaCreat
 		msc.SetDeletedAt(*t)
 	}
 	return msc
+}
+
+// AddTableIDs adds the tables edge to MetaTable by ids.
+func (msc *MetaSchemaCreate) AddTableIDs(ids ...int) *MetaSchemaCreate {
+	if msc.tables == nil {
+		msc.tables = make(map[int]struct{})
+	}
+	for i := range ids {
+		msc.tables[ids[i]] = struct{}{}
+	}
+	return msc
+}
+
+// AddTables adds the tables edges to MetaTable.
+func (msc *MetaSchemaCreate) AddTables(m ...*MetaTable) *MetaSchemaCreate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return msc.AddTableIDs(ids...)
 }
 
 // Save creates the MetaSchema in the database.
@@ -136,6 +158,25 @@ func (msc *MetaSchemaCreate) sqlSave(ctx context.Context) (*MetaSchema, error) {
 			Column: metaschema.FieldDeletedAt,
 		})
 		ms.DeletedAt = value
+	}
+	if nodes := msc.tables; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metaschema.TablesTable,
+			Columns: []string{metaschema.TablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metatable.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges = append(spec.Edges, edge)
 	}
 	if err := sqlgraph.CreateNode(ctx, msc.driver, spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {

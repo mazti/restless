@@ -10,9 +10,11 @@ import (
 	"github.com/mazti/restless/base/ent/migrate"
 
 	"github.com/mazti/restless/base/ent/metaschema"
+	"github.com/mazti/restless/base/ent/metatable"
 
 	"github.com/facebookincubator/ent/dialect"
 	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -22,6 +24,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// MetaSchema is the client for interacting with the MetaSchema builders.
 	MetaSchema *MetaSchemaClient
+	// MetaTable is the client for interacting with the MetaTable builders.
+	MetaTable *MetaTableClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -32,6 +36,7 @@ func NewClient(opts ...Option) *Client {
 		config:     c,
 		Schema:     migrate.NewSchema(c.driver),
 		MetaSchema: NewMetaSchemaClient(c),
+		MetaTable:  NewMetaTableClient(c),
 	}
 }
 
@@ -64,6 +69,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		config:     cfg,
 		MetaSchema: NewMetaSchemaClient(cfg),
+		MetaTable:  NewMetaTableClient(cfg),
 	}, nil
 }
 
@@ -83,6 +89,7 @@ func (c *Client) Debug() *Client {
 		config:     cfg,
 		Schema:     migrate.NewSchema(cfg.driver),
 		MetaSchema: NewMetaSchemaClient(cfg),
+		MetaTable:  NewMetaTableClient(cfg),
 	}
 }
 
@@ -153,4 +160,96 @@ func (c *MetaSchemaClient) GetX(ctx context.Context, id int) *MetaSchema {
 		panic(err)
 	}
 	return ms
+}
+
+// QueryTables queries the tables edge of a MetaSchema.
+func (c *MetaSchemaClient) QueryTables(ms *MetaSchema) *MetaTableQuery {
+	query := &MetaTableQuery{config: c.config}
+	id := ms.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(metaschema.Table, metaschema.FieldID, id),
+		sqlgraph.To(metatable.Table, metatable.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, metaschema.TablesTable, metaschema.TablesColumn),
+	)
+	query.sql = sqlgraph.Neighbors(ms.driver.Dialect(), step)
+
+	return query
+}
+
+// MetaTableClient is a client for the MetaTable schema.
+type MetaTableClient struct {
+	config
+}
+
+// NewMetaTableClient returns a client for the MetaTable from the given config.
+func NewMetaTableClient(c config) *MetaTableClient {
+	return &MetaTableClient{config: c}
+}
+
+// Create returns a create builder for MetaTable.
+func (c *MetaTableClient) Create() *MetaTableCreate {
+	return &MetaTableCreate{config: c.config}
+}
+
+// Update returns an update builder for MetaTable.
+func (c *MetaTableClient) Update() *MetaTableUpdate {
+	return &MetaTableUpdate{config: c.config}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MetaTableClient) UpdateOne(mt *MetaTable) *MetaTableUpdateOne {
+	return c.UpdateOneID(mt.ID)
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MetaTableClient) UpdateOneID(id int) *MetaTableUpdateOne {
+	return &MetaTableUpdateOne{config: c.config, id: id}
+}
+
+// Delete returns a delete builder for MetaTable.
+func (c *MetaTableClient) Delete() *MetaTableDelete {
+	return &MetaTableDelete{config: c.config}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *MetaTableClient) DeleteOne(mt *MetaTable) *MetaTableDeleteOne {
+	return c.DeleteOneID(mt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *MetaTableClient) DeleteOneID(id int) *MetaTableDeleteOne {
+	return &MetaTableDeleteOne{c.Delete().Where(metatable.ID(id))}
+}
+
+// Create returns a query builder for MetaTable.
+func (c *MetaTableClient) Query() *MetaTableQuery {
+	return &MetaTableQuery{config: c.config}
+}
+
+// Get returns a MetaTable entity by its id.
+func (c *MetaTableClient) Get(ctx context.Context, id int) (*MetaTable, error) {
+	return c.Query().Where(metatable.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MetaTableClient) GetX(ctx context.Context, id int) *MetaTable {
+	mt, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return mt
+}
+
+// QuerySchema queries the schema edge of a MetaTable.
+func (c *MetaTableClient) QuerySchema(mt *MetaTable) *MetaSchemaQuery {
+	query := &MetaSchemaQuery{config: c.config}
+	id := mt.ID
+	step := sqlgraph.NewStep(
+		sqlgraph.From(metatable.Table, metatable.FieldID, id),
+		sqlgraph.To(metaschema.Table, metaschema.FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, metatable.SchemaTable, metatable.SchemaColumn),
+	)
+	query.sql = sqlgraph.Neighbors(mt.driver.Dialect(), step)
+
+	return query
 }

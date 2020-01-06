@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// MetaSchema is the client for interacting with the MetaSchema builders.
 	MetaSchema *MetaSchemaClient
+	// MetaTable is the client for interacting with the MetaTable builders.
+	MetaTable *MetaTableClient
 }
 
 // Commit commits the transaction.
@@ -32,6 +34,7 @@ func (tx *Tx) Client() *Client {
 		config:     tx.config,
 		Schema:     migrate.NewSchema(tx.driver),
 		MetaSchema: NewMetaSchemaClient(tx.config),
+		MetaTable:  NewMetaTableClient(tx.config),
 	}
 }
 

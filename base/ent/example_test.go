@@ -28,6 +28,14 @@ func ExampleMetaSchema() {
 	defer drv.Close()
 	client := NewClient(Driver(drv))
 	// creating vertices for the metaschema's edges.
+	mt0 := client.MetaTable.
+		Create().
+		SetName("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metatable created:", mt0)
 
 	// create metaschema vertex with its edges.
 	ms := client.MetaSchema.
@@ -36,8 +44,41 @@ func ExampleMetaSchema() {
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetDeletedAt(time.Now()).
+		AddTables(mt0).
 		SaveX(ctx)
 	log.Println("metaschema created:", ms)
+
+	// query edges.
+	mt0, err = ms.QueryTables().First(ctx)
+	if err != nil {
+		log.Fatalf("failed querying tables: %v", err)
+	}
+	log.Println("tables found:", mt0)
+
+	// Output:
+}
+func ExampleMetaTable() {
+	if dsn == "" {
+		return
+	}
+	ctx := context.Background()
+	drv, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("failed creating database client: %v", err)
+	}
+	defer drv.Close()
+	client := NewClient(Driver(drv))
+	// creating vertices for the metatable's edges.
+
+	// create metatable vertex with its edges.
+	mt := client.MetaTable.
+		Create().
+		SetName("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metatable created:", mt)
 
 	// query edges.
 
