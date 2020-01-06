@@ -1,6 +1,7 @@
 .PHONY: install
 install:
-	go install $(pwd)
+	go build -o ./restless ./cmd
+	mv ./restless $(GOPATH)/bin/restless
 
 .PHONY: up
 up:
