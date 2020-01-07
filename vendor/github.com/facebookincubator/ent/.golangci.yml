@@ -1,0 +1,67 @@
+run:
+  timeout: 2m
+
+linters-settings:
+  errcheck:
+    ignore: fmt:.*,Read|Write|Close|Exec,io:Copy
+  dupl:
+    threshold: 100
+  funlen:
+    lines: 100
+    statements: 80
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - funlen
+    - gocritic
+    - gofmt
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - interfacer
+    - misspell
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+    - whitespace
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - dupl
+        - funlen
+        - gosec
+    - linters:
+        - unused
+      source: ent.Schema
+    - path: entc/integration/ent/schema/card.go
+      text: "`internal` is unused"
+    - path: dialect/sql/builder.go
+      text: "can be `Querier`"
+      linters:
+        - interfacer
+    - path: dialect/sql/builder.go
+      text: "SQL string concatenation"
+      linters:
+        - gosec
+    - path: dialect/sql/schema/migrate.go
+      text: "weak cryptographic primitive"
+      linters:
+        - gosec
+    - path: entc/load/load.go
+      text: "packages.LoadSyntax is deprecated"
+      linters:
+        - staticcheck
