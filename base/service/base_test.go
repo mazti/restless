@@ -45,6 +45,31 @@ func TestCreateBaseSuccessfully(t *testing.T) {
 	assert.Nil(t, createdErr)
 	assert.Equal(t, resp.Base, baseName)
 }
+// function have error , i will try fix this
+func TestUpdateBaseSuccessfully(t *testing.T) {
+	baseName := "test-update-base"
+	//id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
+	ctx := context.Background()
+
+	_,metaRepo,baseService,err := createTestSuite()
+	metaResp := &ent.Meta{
+		Base: baseName,
+	}
+	metaRepo.On("Update", ctx,mock.Anything).Return( metaResp,nil)
+
+	assert.Nil(t, err)
+	assert.NotNil(t, baseService)
+
+	req := dto.UpdateBaseReq{
+		Base: baseName,
+	}
+
+	resp, updateErr := baseService.Update(ctx,req)
+
+	assert.Nil(t, updateErr)
+	assert.Equal(t, resp.Base, baseName)
+}
+// function have error , i will try fix this
 func TestGetBaseSuccessfully(t *testing.T) {
 
 	id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
@@ -60,7 +85,7 @@ func TestGetBaseSuccessfully(t *testing.T) {
 	assert.Nil(t, getErr)
 	assert.Equal(t, resp, dto.BaseResp{})
 }
-
+//function have error , i will try fix this in next time
 func TestDeleteBaseSuccessfully(t *testing.T) {
 	id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
 	ctx := context.Background()
