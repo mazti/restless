@@ -4,8 +4,6 @@ import (
 	"context"
 	"github.com/mazti/restless/base/ent"
 	"github.com/mazti/restless/base/ent/metaschema"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"time"
 )
 
@@ -18,33 +16,24 @@ type MetaSchemaRepository interface {
 	Count(ctx context.Context) (int, error)
 }
 
-type metaRepository struct {
+type schemaRepository struct {
 	client *ent.Client
 }
 
 func NewMetaRepository(client *ent.Client) MetaSchemaRepository {
-	return &metaRepository{
+	return &schemaRepository{
 		client: client,
 	}
 }
 
-func (repo *metaRepository) Create(ctx context.Context, meta ent.MetaSchema) (*ent.MetaSchema, error) {
+func (repo *schemaRepository) Create(ctx context.Context, meta ent.MetaSchema) (*ent.MetaSchema, error) {
 	return repo.client.MetaSchema.
 		Create().
 		SetBase(meta.Base).
 		Save(ctx)
 }
 
-func readError(err error) error {
-	if err == nil {
-		return err
-	} else if ent.IsNotFound(err) {
-		return status.Error(codes.NotFound, err.Error())
-	}
-	return err
-}
-
-func (repo *metaRepository) Get(ctx context.Context, id int) (*ent.MetaSchema, error) {
+func (repo *schemaRepository) Get(ctx context.Context, id int) (*ent.MetaSchema, error) {
 	m, err := repo.client.MetaSchema.
 		Query().
 		Where(metaschema.ID(id), metaschema.DeletedAtIsNil()).
@@ -52,7 +41,7 @@ func (repo *metaRepository) Get(ctx context.Context, id int) (*ent.MetaSchema, e
 	return m, readError(err)
 }
 
-func (repo *metaRepository) List(ctx context.Context, offset int, limit int) ([]*ent.MetaSchema, error) {
+func (repo *schemaRepository) List(ctx context.Context, offset int, limit int) ([]*ent.MetaSchema, error) {
 	metas, err := repo.client.MetaSchema.
 		Query().
 		Where(metaschema.DeletedAtIsNil()).
@@ -62,7 +51,7 @@ func (repo *metaRepository) List(ctx context.Context, offset int, limit int) ([]
 	return metas, readError(err)
 }
 
-func (repo *metaRepository) Update(ctx context.Context, m ent.MetaSchema) (*ent.MetaSchema, error) {
+func (repo *schemaRepository) Update(ctx context.Context, m ent.MetaSchema) (*ent.MetaSchema, error) {
 	exist, err := repo.client.MetaSchema.
 		Query().
 		Where(metaschema.ID(m.ID), metaschema.DeletedAtIsNil()).
@@ -78,7 +67,7 @@ func (repo *metaRepository) Update(ctx context.Context, m ent.MetaSchema) (*ent.
 		Save(ctx)
 }
 
-func (repo *metaRepository) Delete(ctx context.Context, id int) (*ent.MetaSchema, error) {
+func (repo *schemaRepository) Delete(ctx context.Context, id int) (*ent.MetaSchema, error) {
 	m, err := repo.client.MetaSchema.
 		UpdateOneID(id).
 		SetDeletedAt(time.Now()).
@@ -86,7 +75,7 @@ func (repo *metaRepository) Delete(ctx context.Context, id int) (*ent.MetaSchema
 	return m, readError(err)
 }
 
-func (repo *metaRepository) Count(ctx context.Context) (int, error) {
+func (repo *schemaRepository) Count(ctx context.Context) (int, error) {
 	m, err := repo.client.MetaSchema.Query().Count(ctx)
 	return m, readError(err)
 }

@@ -2,8 +2,34 @@ package dto
 
 import (
 	"fmt"
-	"strings"
+	"github.com/mazti/restless/base/ent"
 )
+
+func NewTableResp(schemaId int, table ent.MetaTable, EncodeID func(int) (string, error)) (resp *TableResp, err error) {
+	id, err := EncodeID(table.ID)
+	if err != nil {
+		return resp, err
+	}
+	sId, err := EncodeID(schemaId)
+	if err != nil {
+		return resp, err
+	}
+	return &TableResp{
+		ID:        id,
+		SchemaID:  sId,
+		Name:      table.Name,
+		CreatedAt: table.CreatedAt.UnixNano() / 1000000,
+		UpdatedAt: table.UpdatedAt.UnixNano() / 1000000,
+	}, nil
+}
+
+type TableResp struct {
+	ID        string `json:"id"`
+	SchemaID  string `json:"schema_id"`
+	Name      string `json:"name"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
+}
 
 type CreateTableReq struct {
 	Schema  string   `json:"schema"`
@@ -11,20 +37,15 @@ type CreateTableReq struct {
 	Columns []Column `json:"columns"`
 }
 
-func (req *CreateTableReq) ToQuery() string {
-	var query []string
-	query = append(query, "CREATE TABLE")
-	query = append(query, fmt.Sprintf("`%s`.`%s`", req.Schema, req.Name))
-	query = append(query, "(")
-
-	var columns []string
-	for _, c := range req.Columns {
-		columns = append(columns, c.toQuery())
+func (req CreateTableReq) ToTable(DecodeID func(string) (int, error)) (schemaId int, table ent.MetaTable, err error) {
+	schemaId, err = DecodeID(req.Schema)
+	if err != nil {
+		return 0, table, err
 	}
-	query = append(query, strings.Join(columns, ","))
-	query = append(query, ")")
-
-	return strings.Join(query, " ")
+	table = ent.MetaTable{
+		Name: req.Name,
+	}
+	return schemaId, table, nil
 }
 
 type Column struct {
@@ -32,6 +53,6 @@ type Column struct {
 	Attributes string `json:"attributes"`
 }
 
-func (req *Column) toQuery() string {
+func (req *Column) ToQuery() string {
 	return fmt.Sprintf("%s %s", req.Name, req.Attributes)
 }

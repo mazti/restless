@@ -7,30 +7,36 @@ import (
 )
 
 type TableService interface {
-	Create(ctx context.Context, req dto.CreateTableReq) error
+	Create(ctx context.Context, req dto.CreateTableReq) (*dto.TableResp, error)
 }
 
-func NewTableService(baseRepo repository.BaseRepository) (TableService, error) {
+func NewTableService(baseRepo repository.BaseRepository, tableRepo repository.MetaTableRepository, idService IDService) (TableService, error) {
 	return &tableService{
-		repo:     baseRepo,
+		baseRepo:  baseRepo,
+		tableRepo: tableRepo,
+		idService: idService,
 	}, nil
 }
 
 type tableService struct {
-	repo     repository.BaseRepository
+	baseRepo  repository.BaseRepository
+	tableRepo repository.MetaTableRepository
+	idService IDService
 }
 
-func (h tableService) Create(ctx context.Context, req dto.CreateTableReq) error {
-	//resp, err := h.metaClient.Create(ctx, &pb.CreateMetaRequest{Name: req.Name})
-	//if err != nil {
-	//	return err
-	//}
-	//if resp == nil {
-	//	return errors.New("create base meta fail")
-	//}
-	err := h.repo.CreateTable(req)
+func (h tableService) Create(ctx context.Context, req dto.CreateTableReq) (*dto.TableResp, error) {
+	schemaId, table, err := req.ToTable(h.idService.DecodeID)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return err
+	resp, err := h.tableRepo.Create(ctx, schemaId, table)
+	if err != nil {
+		return nil, err
+	}
+	tableName, _ := h.idService.EncodeID(resp.ID)
+	err = h.baseRepo.CreateTable(req.Schema, tableName, req.Columns)
+	if err != nil {
+		return nil, err
+	}
+	return dto.NewTableResp(schemaId, table, h.idService.EncodeID)
 }

@@ -23,7 +23,6 @@ func RunGRPC(listener net.Listener) error {
 	db.SetMaxIdleConns(Config.Database.MaxIdle)
 	baseRepository := repository.NewBaseRepository(db)
 
-
 	client, err := ent.Open("mysql", Config.MetaDatabase.URL)
 	CheckError(err)
 	defer client.Close()
@@ -32,9 +31,10 @@ func RunGRPC(listener net.Listener) error {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 	metaSchemaRepo := repository.NewMetaRepository(client)
+	metaTableRepo := repository.NewTableRepository(client)
 
 	baseService, err := service.NewBaseService(baseRepository, metaSchemaRepo, idService)
-	tableService, err := service.NewTableService(baseRepository)
+	tableService, err := service.NewTableService(baseRepository, metaTableRepo, idService)
 	CheckError(err)
 
 	s := grpc.NewServer()

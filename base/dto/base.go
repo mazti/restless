@@ -9,7 +9,7 @@ type CreateBaseReq struct {
 	Base string `json:"base"`
 }
 
-func NewBaseResp(meta *ent.MetaSchema, EncodeID func(id int) (string, error)) (resp BaseResp, err error) {
+func NewBaseResp(meta *ent.MetaSchema, EncodeID func(int) (string, error)) (resp BaseResp, err error) {
 	id, err := EncodeID(meta.ID)
 	if err != nil {
 		return resp, err
@@ -45,7 +45,7 @@ func (req CreateBaseReq) ToMeta() ent.MetaSchema {
 	}
 }
 
-func (req UpdateBaseReq) ToMeta(DecodeID func(id string) (int, error)) (meta ent.MetaSchema, err error) {
+func (req UpdateBaseReq) ToMeta(DecodeID func(string) (int, error)) (meta ent.MetaSchema, err error) {
 	id, err := DecodeID(req.ID)
 	if err != nil {
 		return meta, err
