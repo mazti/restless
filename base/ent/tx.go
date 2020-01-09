@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// MetaColumn is the client for interacting with the MetaColumn builders.
+	MetaColumn *MetaColumnClient
 	// MetaSchema is the client for interacting with the MetaSchema builders.
 	MetaSchema *MetaSchemaClient
 	// MetaTable is the client for interacting with the MetaTable builders.
@@ -33,6 +35,7 @@ func (tx *Tx) Client() *Client {
 	return &Client{
 		config:     tx.config,
 		Schema:     migrate.NewSchema(tx.driver),
+		MetaColumn: NewMetaColumnClient(tx.config),
 		MetaSchema: NewMetaSchemaClient(tx.config),
 		MetaTable:  NewMetaTableClient(tx.config),
 	}
@@ -45,7 +48,7 @@ func (tx *Tx) Client() *Client {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: MetaSchema.QueryXXX(), the query will be executed
+// applies a query, for example: MetaColumn.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

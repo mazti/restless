@@ -8,14 +8,17 @@ import (
 )
 
 // Meta holds the schema definition for the Meta entity.
-type MetaTable struct {
+type MetaColumn struct {
 	ent.Schema
 }
 
 // Fields of the Meta.
-func (MetaTable) Fields() []ent.Field {
+func (MetaColumn) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
+		field.String("type"),
+		field.String("default"),
+		field.Text("type_option"),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").
@@ -27,11 +30,10 @@ func (MetaTable) Fields() []ent.Field {
 }
 
 // Edges of the Meta.
-func (MetaTable) Edges() []ent.Edge {
+func (MetaColumn) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("schema", MetaSchema.Type).
-			Ref("tables").
+		edge.From("table", MetaTable.Type).
+			Ref("columns").
 			Unique(),
-		edge.To("columns", MetaColumn.Type),
 	}
 }

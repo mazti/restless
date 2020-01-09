@@ -9,6 +9,7 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/mazti/restless/base/ent/metacolumn"
 	"github.com/mazti/restless/base/ent/metaschema"
 	"github.com/mazti/restless/base/ent/metatable"
 )
@@ -21,6 +22,7 @@ type MetaTableCreate struct {
 	updated_at *time.Time
 	deleted_at *time.Time
 	schema     map[int]struct{}
+	columns    map[int]struct{}
 }
 
 // SetName sets the name field.
@@ -91,6 +93,26 @@ func (mtc *MetaTableCreate) SetNillableSchemaID(id *int) *MetaTableCreate {
 // SetSchema sets the schema edge to MetaSchema.
 func (mtc *MetaTableCreate) SetSchema(m *MetaSchema) *MetaTableCreate {
 	return mtc.SetSchemaID(m.ID)
+}
+
+// AddColumnIDs adds the columns edge to MetaColumn by ids.
+func (mtc *MetaTableCreate) AddColumnIDs(ids ...int) *MetaTableCreate {
+	if mtc.columns == nil {
+		mtc.columns = make(map[int]struct{})
+	}
+	for i := range ids {
+		mtc.columns[ids[i]] = struct{}{}
+	}
+	return mtc
+}
+
+// AddColumns adds the columns edges to MetaColumn.
+func (mtc *MetaTableCreate) AddColumns(m ...*MetaColumn) *MetaTableCreate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mtc.AddColumnIDs(ids...)
 }
 
 // Save creates the MetaTable in the database.
@@ -175,6 +197,25 @@ func (mtc *MetaTableCreate) sqlSave(ctx context.Context) (*MetaTable, error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: metaschema.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges = append(spec.Edges, edge)
+	}
+	if nodes := mtc.columns; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metatable.ColumnsTable,
+			Columns: []string{metatable.ColumnsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metacolumn.FieldID,
 				},
 			},
 		}

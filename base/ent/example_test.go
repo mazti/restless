@@ -16,6 +16,36 @@ import (
 //
 var dsn string
 
+func ExampleMetaColumn() {
+	if dsn == "" {
+		return
+	}
+	ctx := context.Background()
+	drv, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("failed creating database client: %v", err)
+	}
+	defer drv.Close()
+	client := NewClient(Driver(drv))
+	// creating vertices for the metacolumn's edges.
+
+	// create metacolumn vertex with its edges.
+	mc := client.MetaColumn.
+		Create().
+		SetName("string").
+		SetType("string").
+		SetDefault("string").
+		SetTypeOption("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metacolumn created:", mc)
+
+	// query edges.
+
+	// Output:
+}
 func ExampleMetaSchema() {
 	if dsn == "" {
 		return
@@ -69,6 +99,17 @@ func ExampleMetaTable() {
 	defer drv.Close()
 	client := NewClient(Driver(drv))
 	// creating vertices for the metatable's edges.
+	mc1 := client.MetaColumn.
+		Create().
+		SetName("string").
+		SetType("string").
+		SetDefault("string").
+		SetTypeOption("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metacolumn created:", mc1)
 
 	// create metatable vertex with its edges.
 	mt := client.MetaTable.
@@ -77,10 +118,17 @@ func ExampleMetaTable() {
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetDeletedAt(time.Now()).
+		AddColumns(mc1).
 		SaveX(ctx)
 	log.Println("metatable created:", mt)
 
 	// query edges.
+
+	mc1, err = mt.QueryColumns().First(ctx)
+	if err != nil {
+		log.Fatalf("failed querying columns: %v", err)
+	}
+	log.Println("columns found:", mc1)
 
 	// Output:
 }

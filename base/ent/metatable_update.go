@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/mazti/restless/base/ent/metacolumn"
 	"github.com/mazti/restless/base/ent/metaschema"
 	"github.com/mazti/restless/base/ent/metatable"
 	"github.com/mazti/restless/base/ent/predicate"
@@ -24,7 +25,9 @@ type MetaTableUpdate struct {
 	deleted_at      *time.Time
 	cleardeleted_at bool
 	schema          map[int]struct{}
+	columns         map[int]struct{}
 	clearedSchema   bool
+	removedColumns  map[int]struct{}
 	predicates      []predicate.MetaTable
 }
 
@@ -111,10 +114,50 @@ func (mtu *MetaTableUpdate) SetSchema(m *MetaSchema) *MetaTableUpdate {
 	return mtu.SetSchemaID(m.ID)
 }
 
+// AddColumnIDs adds the columns edge to MetaColumn by ids.
+func (mtu *MetaTableUpdate) AddColumnIDs(ids ...int) *MetaTableUpdate {
+	if mtu.columns == nil {
+		mtu.columns = make(map[int]struct{})
+	}
+	for i := range ids {
+		mtu.columns[ids[i]] = struct{}{}
+	}
+	return mtu
+}
+
+// AddColumns adds the columns edges to MetaColumn.
+func (mtu *MetaTableUpdate) AddColumns(m ...*MetaColumn) *MetaTableUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mtu.AddColumnIDs(ids...)
+}
+
 // ClearSchema clears the schema edge to MetaSchema.
 func (mtu *MetaTableUpdate) ClearSchema() *MetaTableUpdate {
 	mtu.clearedSchema = true
 	return mtu
+}
+
+// RemoveColumnIDs removes the columns edge to MetaColumn by ids.
+func (mtu *MetaTableUpdate) RemoveColumnIDs(ids ...int) *MetaTableUpdate {
+	if mtu.removedColumns == nil {
+		mtu.removedColumns = make(map[int]struct{})
+	}
+	for i := range ids {
+		mtu.removedColumns[ids[i]] = struct{}{}
+	}
+	return mtu
+}
+
+// RemoveColumns removes columns edges to MetaColumn.
+func (mtu *MetaTableUpdate) RemoveColumns(m ...*MetaColumn) *MetaTableUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mtu.RemoveColumnIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -234,6 +277,44 @@ func (mtu *MetaTableUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		spec.Edges.Add = append(spec.Edges.Add, edge)
 	}
+	if nodes := mtu.removedColumns; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metatable.ColumnsTable,
+			Columns: []string{metatable.ColumnsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metacolumn.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Clear = append(spec.Edges.Clear, edge)
+	}
+	if nodes := mtu.columns; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metatable.ColumnsTable,
+			Columns: []string{metatable.ColumnsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metacolumn.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Add = append(spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mtu.driver, spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -253,7 +334,9 @@ type MetaTableUpdateOne struct {
 	deleted_at      *time.Time
 	cleardeleted_at bool
 	schema          map[int]struct{}
+	columns         map[int]struct{}
 	clearedSchema   bool
+	removedColumns  map[int]struct{}
 }
 
 // SetName sets the name field.
@@ -333,10 +416,50 @@ func (mtuo *MetaTableUpdateOne) SetSchema(m *MetaSchema) *MetaTableUpdateOne {
 	return mtuo.SetSchemaID(m.ID)
 }
 
+// AddColumnIDs adds the columns edge to MetaColumn by ids.
+func (mtuo *MetaTableUpdateOne) AddColumnIDs(ids ...int) *MetaTableUpdateOne {
+	if mtuo.columns == nil {
+		mtuo.columns = make(map[int]struct{})
+	}
+	for i := range ids {
+		mtuo.columns[ids[i]] = struct{}{}
+	}
+	return mtuo
+}
+
+// AddColumns adds the columns edges to MetaColumn.
+func (mtuo *MetaTableUpdateOne) AddColumns(m ...*MetaColumn) *MetaTableUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mtuo.AddColumnIDs(ids...)
+}
+
 // ClearSchema clears the schema edge to MetaSchema.
 func (mtuo *MetaTableUpdateOne) ClearSchema() *MetaTableUpdateOne {
 	mtuo.clearedSchema = true
 	return mtuo
+}
+
+// RemoveColumnIDs removes the columns edge to MetaColumn by ids.
+func (mtuo *MetaTableUpdateOne) RemoveColumnIDs(ids ...int) *MetaTableUpdateOne {
+	if mtuo.removedColumns == nil {
+		mtuo.removedColumns = make(map[int]struct{})
+	}
+	for i := range ids {
+		mtuo.removedColumns[ids[i]] = struct{}{}
+	}
+	return mtuo
+}
+
+// RemoveColumns removes columns edges to MetaColumn.
+func (mtuo *MetaTableUpdateOne) RemoveColumns(m ...*MetaColumn) *MetaTableUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mtuo.RemoveColumnIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -442,6 +565,44 @@ func (mtuo *MetaTableUpdateOne) sqlSave(ctx context.Context) (mt *MetaTable, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: metaschema.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Add = append(spec.Edges.Add, edge)
+	}
+	if nodes := mtuo.removedColumns; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metatable.ColumnsTable,
+			Columns: []string{metatable.ColumnsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metacolumn.FieldID,
+				},
+			},
+		}
+		for k, _ := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		spec.Edges.Clear = append(spec.Edges.Clear, edge)
+	}
+	if nodes := mtuo.columns; len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   metatable.ColumnsTable,
+			Columns: []string{metatable.ColumnsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: metacolumn.FieldID,
 				},
 			},
 		}

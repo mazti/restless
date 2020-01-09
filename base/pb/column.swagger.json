@@ -1,0 +1,224 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "base/pb/column.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/column/{id}": {
+      "delete": {
+        "operationId": "Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/sharedEmptyMsg"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Column"
+        ]
+      }
+    },
+    "/column/{table}": {
+      "post": {
+        "operationId": "Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateColumnReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateColumnRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Column"
+        ]
+      }
+    },
+    "/column/{table}/{id}": {
+      "patch": {
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateColumnReply"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateColumnRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Column"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pbCreateColumnReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        },
+        "typeOption": {
+          "$ref": "#/definitions/pbTypeOption"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbCreateColumnRequest": {
+      "type": "object",
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        },
+        "typeOption": {
+          "$ref": "#/definitions/pbTypeOption"
+        }
+      }
+    },
+    "pbTypeOption": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "precision": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateColumnReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        },
+        "typeOption": {
+          "$ref": "#/definitions/pbTypeOption"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbUpdateColumnRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        },
+        "typeOption": {
+          "$ref": "#/definitions/pbTypeOption"
+        }
+      }
+    },
+    "sharedEmptyMsg": {
+      "type": "object"
+    }
+  }
+}

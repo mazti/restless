@@ -32,14 +32,17 @@ func RunGRPC(listener net.Listener) error {
 	}
 	metaSchemaRepo := repository.NewMetaRepository(client)
 	metaTableRepo := repository.NewTableRepository(client)
+	metaColumnRepo := repository.NewColumnRepository(client)
 
 	baseService, err := service.NewBaseService(baseRepository, metaSchemaRepo, idService)
 	tableService, err := service.NewTableService(baseRepository, metaTableRepo, idService)
+	columnService, err := service.NewColumnService(baseRepository, metaColumnRepo, metaTableRepo, idService)
 	CheckError(err)
 
 	s := grpc.NewServer()
 	pb.RegisterBaseServer(s, transport.NewBaseGRPCServer(baseService))
 	pb.RegisterTableServer(s, transport.NewTableGRPCServer(tableService))
+	pb.RegisterColumnServer(s, transport.NewColumnGRPCServer(columnService))
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 

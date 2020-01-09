@@ -78,6 +78,11 @@ func (mt *MetaTable) QuerySchema() *MetaSchemaQuery {
 	return (&MetaTableClient{mt.config}).QuerySchema(mt)
 }
 
+// QueryColumns queries the columns edge of the MetaTable.
+func (mt *MetaTable) QueryColumns() *MetaColumnQuery {
+	return (&MetaTableClient{mt.config}).QueryColumns(mt)
+}
+
 // Update returns a builder for updating this MetaTable.
 // Note that, you need to call MetaTable.Unwrap() before calling this method, if this MetaTable
 // was returned from a transaction, and the transaction was committed or rolled back.

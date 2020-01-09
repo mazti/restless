@@ -8,6 +8,33 @@ import (
 )
 
 var (
+	// MetaColumnsColumns holds the columns for the "meta_columns" table.
+	MetaColumnsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeString},
+		{Name: "default", Type: field.TypeString},
+		{Name: "type_option", Type: field.TypeString, Size: 2147483647},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "table_id", Type: field.TypeInt, Nullable: true},
+	}
+	// MetaColumnsTable holds the schema information for the "meta_columns" table.
+	MetaColumnsTable = &schema.Table{
+		Name:       "meta_columns",
+		Columns:    MetaColumnsColumns,
+		PrimaryKey: []*schema.Column{MetaColumnsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "meta_columns_meta_tables_columns",
+				Columns: []*schema.Column{MetaColumnsColumns[8]},
+
+				RefColumns: []*schema.Column{MetaTablesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// MetaSchemasColumns holds the columns for the "meta_schemas" table.
 	MetaSchemasColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -49,11 +76,13 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		MetaColumnsTable,
 		MetaSchemasTable,
 		MetaTablesTable,
 	}
 )
 
 func init() {
+	MetaColumnsTable.ForeignKeys[0].RefTable = MetaTablesTable
 	MetaTablesTable.ForeignKeys[0].RefTable = MetaSchemasTable
 }

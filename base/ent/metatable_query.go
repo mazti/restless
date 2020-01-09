@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/mazti/restless/base/ent/metacolumn"
 	"github.com/mazti/restless/base/ent/metaschema"
 	"github.com/mazti/restless/base/ent/metatable"
 	"github.com/mazti/restless/base/ent/predicate"
@@ -59,6 +60,18 @@ func (mtq *MetaTableQuery) QuerySchema() *MetaSchemaQuery {
 		sqlgraph.From(metatable.Table, metatable.FieldID, mtq.sqlQuery()),
 		sqlgraph.To(metaschema.Table, metaschema.FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, metatable.SchemaTable, metatable.SchemaColumn),
+	)
+	query.sql = sqlgraph.SetNeighbors(mtq.driver.Dialect(), step)
+	return query
+}
+
+// QueryColumns chains the current query on the columns edge.
+func (mtq *MetaTableQuery) QueryColumns() *MetaColumnQuery {
+	query := &MetaColumnQuery{config: mtq.config}
+	step := sqlgraph.NewStep(
+		sqlgraph.From(metatable.Table, metatable.FieldID, mtq.sqlQuery()),
+		sqlgraph.To(metacolumn.Table, metacolumn.FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, metatable.ColumnsTable, metatable.ColumnsColumn),
 	)
 	query.sql = sqlgraph.SetNeighbors(mtq.driver.Dialect(), step)
 	return query
