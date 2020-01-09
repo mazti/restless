@@ -38,7 +38,7 @@ export GO111MODULE=on
 go get -d -v github.com/mazti/restless
 
 # Or man-handling it
-mkdir -p $GOPATH/src/github.com/tiennv147
+mkdir -p $GOPATH/src/github.com/mazti
 git clone https://github.com/mazti/restless.git $GOPATH/src/github.com/mazti/restless
 ```
 
