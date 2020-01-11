@@ -8,16 +8,16 @@ import (
 	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/mazti/restless/base/ent/meta"
+	"github.com/mazti/restless/base/ent/metatable"
 )
 
-// Meta is the model entity for the Meta schema.
-type Meta struct {
+// MetaTable is the model entity for the MetaTable schema.
+type MetaTable struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Base holds the value of the "base" field.
-	Base string `json:"base,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -27,7 +27,7 @@ type Meta struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Meta) scanValues() []interface{} {
+func (*MetaTable) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},
 		&sql.NullString{},
@@ -38,71 +38,81 @@ func (*Meta) scanValues() []interface{} {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Meta fields.
-func (m *Meta) assignValues(values ...interface{}) error {
-	if m, n := len(values), len(meta.Columns); m != n {
+// to the MetaTable fields.
+func (mt *MetaTable) assignValues(values ...interface{}) error {
+	if m, n := len(values), len(metatable.Columns); m != n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	value, ok := values[0].(*sql.NullInt64)
 	if !ok {
 		return fmt.Errorf("unexpected type %T for field id", value)
 	}
-	m.ID = int(value.Int64)
+	mt.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field base", values[0])
+		return fmt.Errorf("unexpected type %T for field name", values[0])
 	} else if value.Valid {
-		m.Base = value.String
+		mt.Name = value.String
 	}
 	if value, ok := values[1].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field created_at", values[1])
 	} else if value.Valid {
-		m.CreatedAt = value.Time
+		mt.CreatedAt = value.Time
 	}
 	if value, ok := values[2].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field updated_at", values[2])
 	} else if value.Valid {
-		m.UpdatedAt = value.Time
+		mt.UpdatedAt = value.Time
 	}
 	if value, ok := values[3].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field deleted_at", values[3])
 	} else if value.Valid {
-		m.DeletedAt = new(time.Time)
-		*m.DeletedAt = value.Time
+		mt.DeletedAt = new(time.Time)
+		*mt.DeletedAt = value.Time
 	}
 	return nil
 }
 
-// Update returns a builder for updating this Meta.
-// Note that, you need to call Meta.Unwrap() before calling this method, if this Meta
+// QuerySchema queries the schema edge of the MetaTable.
+func (mt *MetaTable) QuerySchema() *MetaSchemaQuery {
+	return (&MetaTableClient{mt.config}).QuerySchema(mt)
+}
+
+// QueryColumns queries the columns edge of the MetaTable.
+func (mt *MetaTable) QueryColumns() *MetaColumnQuery {
+	return (&MetaTableClient{mt.config}).QueryColumns(mt)
+}
+
+// Update returns a builder for updating this MetaTable.
+// Note that, you need to call MetaTable.Unwrap() before calling this method, if this MetaTable
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (m *Meta) Update() *MetaUpdateOne {
-	return (&MetaClient{m.config}).UpdateOne(m)
+func (mt *MetaTable) Update() *MetaTableUpdateOne {
+	return (&MetaTableClient{mt.config}).UpdateOne(mt)
 }
 
 // Unwrap unwraps the entity that was returned from a transaction after it was closed,
 // so that all next queries will be executed through the driver which created the transaction.
-func (m *Meta) Unwrap() *Meta {
-	tx, ok := m.config.driver.(*txDriver)
+func (mt *MetaTable) Unwrap() *MetaTable {
+	tx, ok := mt.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Meta is not a transactional entity")
+		panic("ent: MetaTable is not a transactional entity")
 	}
-	m.config.driver = tx.drv
-	return m
+	mt.config.driver = tx.drv
+	return mt
 }
 
 // String implements the fmt.Stringer.
-func (m *Meta) String() string {
+func (mt *MetaTable) String() string {
 	var builder strings.Builder
-	builder.WriteString("Meta(")
-	builder.WriteString(fmt.Sprintf("id=%v", m.ID))
-	builder.WriteString(", base=")
-	builder.WriteString(m.Base)
+	builder.WriteString("MetaTable(")
+	builder.WriteString(fmt.Sprintf("id=%v", mt.ID))
+	builder.WriteString(", name=")
+	builder.WriteString(mt.Name)
 	builder.WriteString(", created_at=")
-	builder.WriteString(m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(mt.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")
-	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
-	if v := m.DeletedAt; v != nil {
+	builder.WriteString(mt.UpdatedAt.Format(time.ANSIC))
+	if v := mt.DeletedAt; v != nil {
 		builder.WriteString(", deleted_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
@@ -110,11 +120,11 @@ func (m *Meta) String() string {
 	return builder.String()
 }
 
-// MetaSlice is a parsable slice of Meta.
-type MetaSlice []*Meta
+// MetaTables is a parsable slice of MetaTable.
+type MetaTables []*MetaTable
 
-func (m MetaSlice) config(cfg config) {
-	for _i := range m {
-		m[_i].config = cfg
+func (mt MetaTables) config(cfg config) {
+	for _i := range mt {
+		mt[_i].config = cfg
 	}
 }

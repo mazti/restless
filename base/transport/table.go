@@ -26,7 +26,7 @@ func (g *tableGRPCServer) Create(ctx netcontext.Context, req *base.CreateTableRe
 		columns = append(columns, dto.Column{Name: c.Name, Attributes: c.Attributes})
 	}
 	tableReq := dto.CreateTableReq{Schema: req.Schema, Name: req.Name, Columns: columns}
-	err := g.tableService.Create(ctx, tableReq)
+	_, err := g.tableService.Create(ctx, tableReq)
 	if err != nil {
 		return nil, err
 	}

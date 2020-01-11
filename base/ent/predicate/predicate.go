@@ -6,5 +6,11 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 )
 
-// Meta is the predicate function for meta builders.
-type Meta func(*sql.Selector)
+// MetaColumn is the predicate function for metacolumn builders.
+type MetaColumn func(*sql.Selector)
+
+// MetaSchema is the predicate function for metaschema builders.
+type MetaSchema func(*sql.Selector)
+
+// MetaTable is the predicate function for metatable builders.
+type MetaTable func(*sql.Selector)

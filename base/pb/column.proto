@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+import "github.com/mazti/restless/shared/proto/shared.proto";
+
+service Column {
+    rpc Create (CreateColumnRequest) returns (CreateColumnReply) {
+        option (google.api.http) = {
+            post: "/column/{table}"
+            body: "*"
+        };
+    };
+    rpc Update (UpdateColumnRequest) returns (UpdateColumnReply) {
+        option (google.api.http) = {
+            patch: "/column/{table}/{id}"
+            body: "*"
+        };
+    };
+    rpc Delete (shared.DeleteRequest) returns (shared.EmptyMsg) {
+        option (google.api.http) = {
+            delete: "/column/{id}"
+        };
+    };
+}
+
+message CreateColumnRequest {
+    string table = 1;
+    string name = 2;
+    string type = 3;
+    string default = 4;
+    TypeOption typeOption = 5;
+}
+
+message CreateColumnReply {
+    string id = 1;
+    string name = 2;
+    string type = 3;
+    string default = 4;
+    TypeOption typeOption = 5;
+    int64 created_at = 6;
+    int64 updated_at = 7;
+}
+
+message UpdateColumnRequest {
+    string id = 1;
+    string table = 2;
+    string name = 3;
+    string type = 4;
+    string default = 5;
+    TypeOption typeOption = 6;
+}
+
+message UpdateColumnReply {
+    string id = 1;
+    string name = 2;
+    string type = 3;
+    string default = 4;
+    TypeOption typeOption = 5;
+    int64 created_at = 6;
+    int64 updated_at = 7;
+}
+
+message TypeOption {
+    string format = 1;
+    string precision = 2;
+}

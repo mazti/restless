@@ -16,7 +16,7 @@ import (
 //
 var dsn string
 
-func ExampleMeta() {
+func ExampleMetaColumn() {
 	if dsn == "" {
 		return
 	}
@@ -27,19 +27,108 @@ func ExampleMeta() {
 	}
 	defer drv.Close()
 	client := NewClient(Driver(drv))
-	// creating vertices for the meta's edges.
+	// creating vertices for the metacolumn's edges.
 
-	// create meta vertex with its edges.
-	m := client.Meta.
+	// create metacolumn vertex with its edges.
+	mc := client.MetaColumn.
+		Create().
+		SetName("string").
+		SetType("string").
+		SetDefault("string").
+		SetTypeOption("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metacolumn created:", mc)
+
+	// query edges.
+
+	// Output:
+}
+func ExampleMetaSchema() {
+	if dsn == "" {
+		return
+	}
+	ctx := context.Background()
+	drv, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("failed creating database client: %v", err)
+	}
+	defer drv.Close()
+	client := NewClient(Driver(drv))
+	// creating vertices for the metaschema's edges.
+	mt0 := client.MetaTable.
+		Create().
+		SetName("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metatable created:", mt0)
+
+	// create metaschema vertex with its edges.
+	ms := client.MetaSchema.
 		Create().
 		SetBase("string").
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetDeletedAt(time.Now()).
+		AddTables(mt0).
 		SaveX(ctx)
-	log.Println("meta created:", m)
+	log.Println("metaschema created:", ms)
 
 	// query edges.
+	mt0, err = ms.QueryTables().First(ctx)
+	if err != nil {
+		log.Fatalf("failed querying tables: %v", err)
+	}
+	log.Println("tables found:", mt0)
+
+	// Output:
+}
+func ExampleMetaTable() {
+	if dsn == "" {
+		return
+	}
+	ctx := context.Background()
+	drv, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("failed creating database client: %v", err)
+	}
+	defer drv.Close()
+	client := NewClient(Driver(drv))
+	// creating vertices for the metatable's edges.
+	mc1 := client.MetaColumn.
+		Create().
+		SetName("string").
+		SetType("string").
+		SetDefault("string").
+		SetTypeOption("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		SaveX(ctx)
+	log.Println("metacolumn created:", mc1)
+
+	// create metatable vertex with its edges.
+	mt := client.MetaTable.
+		Create().
+		SetName("string").
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetDeletedAt(time.Now()).
+		AddColumns(mc1).
+		SaveX(ctx)
+	log.Println("metatable created:", mt)
+
+	// query edges.
+
+	mc1, err = mt.QueryColumns().First(ctx)
+	if err != nil {
+		log.Fatalf("failed querying columns: %v", err)
+	}
+	log.Println("columns found:", mc1)
 
 	// Output:
 }

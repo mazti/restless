@@ -23,7 +23,6 @@ func RunGRPC(listener net.Listener) error {
 	db.SetMaxIdleConns(Config.Database.MaxIdle)
 	baseRepository := repository.NewBaseRepository(db)
 
-
 	client, err := ent.Open("mysql", Config.MetaDatabase.URL)
 	CheckError(err)
 	defer client.Close()
@@ -31,15 +30,19 @@ func RunGRPC(listener net.Listener) error {
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
-	metaRepo := repository.NewMetaRepository(client)
+	metaSchemaRepo := repository.NewMetaRepository(client)
+	metaTableRepo := repository.NewTableRepository(client)
+	metaColumnRepo := repository.NewColumnRepository(client)
 
-	baseService, err := service.NewBaseService(baseRepository, metaRepo, idService)
-	tableService, err := service.NewTableService(baseRepository, metaRepo)
+	baseService, err := service.NewBaseService(baseRepository, metaSchemaRepo, idService)
+	tableService, err := service.NewTableService(baseRepository, metaTableRepo, idService)
+	columnService, err := service.NewColumnService(baseRepository, metaColumnRepo, metaTableRepo, idService)
 	CheckError(err)
 
 	s := grpc.NewServer()
 	pb.RegisterBaseServer(s, transport.NewBaseGRPCServer(baseService))
 	pb.RegisterTableServer(s, transport.NewTableGRPCServer(tableService))
+	pb.RegisterColumnServer(s, transport.NewColumnGRPCServer(columnService))
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 
