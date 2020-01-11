@@ -22,30 +22,33 @@ func NewColumnGRPCServer(service service.ColumnService) column.ColumnServer {
 
 func (g *columnGRPCServer) Create(ctx netcontext.Context, req *column.CreateColumnRequest) (*column.CreateColumnReply, error) {
 	columnReq := dto.CreateColumnReq{
-		Table:   req.Table,
-		Name:    req.Name,
-		Type:    req.Type,
-		Default: req.Default,
-		TypeOption: dto.TypeOption{
-			Format:    req.TypeOption.Format,
-			Precision: req.TypeOption.Precision,
-		},
+		Table:      req.Table,
+		Name:       req.Name,
+		Type:       req.Type,
+		Default:    req.Default,
+		TypeOption: dto.TypeOption{},
+	}
+	if req.TypeOption != nil {
+		columnReq.TypeOption.Format = req.TypeOption.Format
+		columnReq.TypeOption.Precision = req.TypeOption.Precision
 	}
 	resp, err := g.columnService.Create(ctx, columnReq)
 	if err != nil {
 		return nil, err
 	}
+	option := &column.TypeOption{}
+	if resp.TypeOption != nil {
+		option.Format = resp.TypeOption.Format
+		option.Precision = resp.TypeOption.Precision
+	}
 	return &column.CreateColumnReply{
-		Id:      resp.ID,
-		Name:    resp.Name,
-		Type:    resp.Type,
-		Default: resp.Default,
-		TypeOption: &column.TypeOption{
-			Format:    resp.TypeOption.Format,
-			Precision: resp.TypeOption.Precision,
-		},
-		CreatedAt: resp.CreatedAt,
-		UpdatedAt: resp.UpdatedAt,
+		Id:         resp.ID,
+		Name:       resp.Name,
+		Type:       resp.Type,
+		Default:    resp.Default,
+		TypeOption: option,
+		CreatedAt:  resp.CreatedAt,
+		UpdatedAt:  resp.UpdatedAt,
 	}, nil
 }
 

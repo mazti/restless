@@ -30,6 +30,9 @@ func (repo *columnRepository) Create(ctx context.Context, tableId int, column *e
 	return repo.client.MetaColumn.
 		Create().
 		SetName(column.Name).
+		SetType(column.Type).
+		SetDefault(column.Default).
+		SetTypeOption(column.TypeOption).
 		SetTableID(tableId).
 		Save(ctx)
 }

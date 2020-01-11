@@ -23,10 +23,13 @@ func NewColumnResp(col *ent.MetaColumn, EncodeID func(int) (string, error)) (res
 	if err != nil {
 		return resp, err
 	}
-	var typeOption TypeOption
-	if err := json.Unmarshal([]byte(col.TypeOption), &typeOption); err != nil {
-		return resp, err
+	var typeOption = &TypeOption{}
+	if col.TypeOption != "" {
+		if err := json.Unmarshal([]byte(col.TypeOption), typeOption); err != nil {
+			return resp, err
+		}
 	}
+
 	return &ColumnResp{
 		ID:         id,
 		Name:       col.Name,
@@ -43,7 +46,7 @@ type ColumnResp struct {
 	Name       string     `json:"name"`
 	Type       string     `json:"type"`
 	Default    string     `json:"default"`
-	TypeOption TypeOption `json:"typeOption"`
+	TypeOption *TypeOption `json:"typeOption"`
 	CreatedAt  int64      `json:"created_at"`
 	UpdatedAt  int64      `json:"updated_at"`
 }

@@ -45,6 +45,11 @@ func newGateway(ctx context.Context, opts ...runtime.ServeMuxOption) (http.Handl
 		return nil, err
 	}
 
+	err = pb.RegisterColumnHandlerFromEndpoint(ctx, mux, "0.0.0.0"+Config.GRPC.ListenAddr, dialOpts)
+	if err != nil {
+		return nil, err
+	}
+
 	return mux, nil
 }
 

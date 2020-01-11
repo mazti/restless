@@ -69,6 +69,7 @@ func queryCreatTable(schema string, table string, columns []dto.Column) string {
 	query = append(query, "(")
 
 	var cols []string
+	cols = append(cols, "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY")
 	for _, c := range columns {
 		cols = append(cols, c.ToQuery())
 	}
