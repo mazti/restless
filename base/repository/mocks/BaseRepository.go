@@ -12,6 +12,20 @@ type BaseRepository struct {
 	mock.Mock
 }
 
+// CreateColumn provides a mock function with given fields: schema, table, columnName, options
+func (_m *BaseRepository) CreateColumn(schema string, table string, columnName string, options string) error {
+	ret := _m.Called(schema, table, columnName, options)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, string, string) error); ok {
+		r0 = rf(schema, table, columnName, options)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // CreateSchema provides a mock function with given fields: name
 func (_m *BaseRepository) CreateSchema(name string) error {
 	ret := _m.Called(name)
@@ -26,13 +40,41 @@ func (_m *BaseRepository) CreateSchema(name string) error {
 	return r0
 }
 
-// CreateTable provides a mock function with given fields: base
-func (_m *BaseRepository) CreateTable(base dto.CreateTableReq) error {
-	ret := _m.Called(base)
+// CreateTable provides a mock function with given fields: schema, table, columns
+func (_m *BaseRepository) CreateTable(schema string, table string, columns []dto.Column) error {
+	ret := _m.Called(schema, table, columns)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(dto.CreateTableReq) error); ok {
-		r0 = rf(base)
+	if rf, ok := ret.Get(0).(func(string, string, []dto.Column) error); ok {
+		r0 = rf(schema, table, columns)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteColumn provides a mock function with given fields: schema, table, columnName
+func (_m *BaseRepository) DeleteColumn(schema string, table string, columnName string) error {
+	ret := _m.Called(schema, table, columnName)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, string) error); ok {
+		r0 = rf(schema, table, columnName)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateColumn provides a mock function with given fields: schema, table, columnName, options
+func (_m *BaseRepository) UpdateColumn(schema string, table string, columnName string, options string) error {
+	ret := _m.Called(schema, table, columnName, options)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, string, string) error); ok {
+		r0 = rf(schema, table, columnName, options)
 	} else {
 		r0 = ret.Error(0)
 	}
