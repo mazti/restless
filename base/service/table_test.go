@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
+
 func TableTestSuite() (*mocks.BaseRepository, *mocks.MetaRepository, TableService, error) {
 	baseRepo := &mocks.BaseRepository{}
 	metaRepo := &mocks.MetaRepository{}

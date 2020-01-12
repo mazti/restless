@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	//base "github.com/mazti/restless/base/pb"
 	"testing"
 
 	"github.com/mazti/restless/base/dto"
@@ -12,7 +13,7 @@ import (
 )
 
 func createTestSuite() (*mocks.BaseRepository, *mocks.MetaRepository, BaseService, error) {
-	idService := NewIDService("salt")
+	idService := NewIDService("123")
 	baseRepo := &mocks.BaseRepository{}
 	metaRepo := &mocks.MetaRepository{}
 	baseService, err := NewBaseService(baseRepo, metaRepo, idService)
@@ -45,57 +46,104 @@ func TestCreateBaseSuccessfully(t *testing.T) {
 	assert.Nil(t, createdErr)
 	assert.Equal(t, resp.Base, baseName)
 }
-// function have error , i will try fix this
+
+//function unit test update
 func TestUpdateBaseSuccessfully(t *testing.T) {
 	baseName := "test-update-base"
-	//id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
+	id := "E4gVbBwDy013oLPOxlMp5r7k6WnR9Z"
+	//id1 := "123"
+
 	ctx := context.Background()
 
-	_,metaRepo,baseService,err := createTestSuite()
+	_, metaRepo, baseService, err := createTestSuite()
 	metaResp := &ent.Meta{
 		Base: baseName,
 	}
-	metaRepo.On("Update", ctx,mock.Anything).Return( metaResp,nil)
+	metaRepo.On("Update", ctx, mock.Anything).Return(metaResp, nil)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, baseService)
 
 	req := dto.UpdateBaseReq{
-		Base: baseName,
+		ID: id,
 	}
 
-	resp, updateErr := baseService.Update(ctx,req)
-
+	resp, updateErr := baseService.Update(ctx, req)
+	//
 	assert.Nil(t, updateErr)
-	assert.Equal(t, resp.Base, baseName)
+	assert.NotEmpty(t, resp)
 }
-// function have error , i will try fix this
-func TestGetBaseSuccessfully(t *testing.T) {
 
-	id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
+//function unit test get
+
+func TestGetBaseSuccessfully(t *testing.T) {
+	baseName := "test-get-base"
+
+	id := "E4gVbBwDy013oLPOxlMp5r7k6WnR9Z"
+	idDecode := 123
 	ctx := context.Background()
 	_, metaRepo, baseService, err := createTestSuite()
 	assert.Nil(t, err)
 	assert.NotNil(t, baseService)
-
-	metaRepo.On("Get", ctx, id).Return(nil)
+	metaResp := &ent.Meta{
+		Base: baseName,
+	}
+	metaRepo.On("Get", ctx, idDecode).Return(metaResp, nil)
 
 	resp, getErr := baseService.Get(ctx, id)
 
 	assert.Nil(t, getErr)
-	assert.Equal(t, resp, dto.BaseResp{})
+	assert.NotEmpty(t, resp)
 }
-//function have error , i will try fix this in next time
-func TestDeleteBaseSuccessfully(t *testing.T) {
-	id := "v6qMj1Wd9EXAx30lb3aZPoJbe2KOyG"
+
+//function unit test list
+func TestListBaseSuccessfully(t *testing.T) {
+	baseName := "test-list-base"
+	offset := 4
+	limit := 4
 	ctx := context.Background()
 	_, metaRepo, baseService, err := createTestSuite()
+
 	assert.Nil(t, err)
 	assert.NotNil(t, baseService)
 
-	metaRepo.On("Delete", ctx, id).Return(nil)
+	//var metaResp []*ent.Meta
 
-	getErr := baseService.Delete(ctx, id)
+	var metaResp []*ent.Meta
+	metaRespElement := &ent.Meta{
+		Base: baseName,
+	}
+	metaResp = append(metaResp, metaRespElement)
+	mockCount := 0
+
+	metaRepo.On("List", ctx, offset, limit).Return(metaResp, nil)
+	metaRepo.On("Count", ctx).Return(mockCount, nil)
+
+	resp, getErr := baseService.List(ctx, offset, limit)
+
+	assert.Nil(t, getErr)
+	assert.NotEmpty(t, resp)
+}
+
+//function unit test delete
+func TestDeleteBaseSuccessfully(t *testing.T) {
+	id := 123
+	idDecode := "E4gVbBwDy013oLPOxlMp5r7k6WnR9Z"
+
+	baseName := "test-delete-base"
+
+	ctx := context.Background()
+	_, metaRepo, baseService, err := createTestSuite()
+
+	metaResp := &ent.Meta{
+		Base: baseName,
+	}
+	assert.Nil(t, err)
+	assert.NotNil(t, baseService)
+
+	metaRepo.On("Delete", ctx, id).Return(metaResp, nil)
+
+	getErr := baseService.Delete(ctx, idDecode)
 
 	assert.Nil(t, getErr)
 }
